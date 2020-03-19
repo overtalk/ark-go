@@ -11,16 +11,23 @@ import (
 const str = `package src
 
 import (
-	"reflect"
+	"log"
 	"runtime"
+	"reflect"
+	"path/filepath"
 
 	"github.com/ArkNX/ark-go/interface"
 	"{{.ProjectName}}/plugin/{{.PluginName}}Plugin/{{.ModuleName}}Module"
 )
 
 func init() {
-	{{.ModuleName}}Module.ModuleName = ark.GetName((*AFC{{.UcfirstModuleName}}Module)(nil))
-	{{.ModuleName}}Module.ModuleType = ark.GetType((*AFC{{.UcfirstModuleName}}Module)(nil))
+	t := reflect.TypeOf((*AFC{{.UcfirstModuleName}}Module)(nil))
+	if !t.Implements(reflect.TypeOf((*{{.ModuleName}}Module.AFI{{.UcfirstModuleName}}Module)(nil)).Elem()) {
+		log.Fatal("AFI{{.UcfirstModuleName}}Module is not implemented by AFC{{.UcfirstModuleName}}Module")
+	}
+
+	{{.ModuleName}}Module.ModuleType = t.Elem()
+	{{.ModuleName}}Module.ModuleName = filepath.Join({{.ModuleName}}Module.ModuleType.PkgPath(), {{.ModuleName}}Module.ModuleType.Name())
 	{{.ModuleName}}Module.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFC{{.UcfirstModuleName}}Module{}).Update).Pointer()).Name()
 }
 
