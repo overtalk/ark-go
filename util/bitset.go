@@ -1,56 +1,49 @@
 package util
 
 import (
-	"bytes"
-	"fmt"
+	"strconv"
 )
 
-type Bitmap struct {
-	words  []uint64
-	length int
-}
-
-func NewBitmap() *Bitmap {
-	return &Bitmap{}
-}
-func (bitmap *Bitmap) Has(num int) bool {
-	word, bit := num/64, uint(num%64)
-	return word < len(bitmap.words) && (bitmap.words[word]&(1<<bit)) != 0
-}
-
-func (bitmap *Bitmap) Add(num int) {
-	word, bit := num/64, uint(num%64)
-	for word >= len(bitmap.words) {
-		bitmap.words = append(bitmap.words, 0)
-	}
-	// 判断num是否已经存在bitmap中
-	if bitmap.words[word]&(1<<bit) == 0 {
-		bitmap.words[word] |= 1 << bit
-		bitmap.length++
+// NewBitSet 创建一个新的 bitset
+func NewBitSet() BitSet {
+	return BitSet{
+		bit: uint64(0),
 	}
 }
 
-func (bitmap *Bitmap) Len() int {
-	return bitmap.length
+// BitSet 用一个64位的数来表示一个 set，每一位代表一个值
+type BitSet struct {
+	bit uint64
 }
 
-func (bitmap *Bitmap) String() string {
-	var buf bytes.Buffer
-	buf.WriteByte('{')
-	for i, v := range bitmap.words {
-		if v == 0 {
-			continue
-		}
-		for j := uint(0); j < 64; j++ {
-			if v&(1<<j) != 0 {
-				if buf.Len() > len("{") {
-					buf.WriteByte(' ')
-				}
-				fmt.Fprintf(&buf, "%d", 64*uint(i)+j)
-			}
-		}
-	}
-	buf.WriteByte('}')
-	fmt.Fprintf(&buf, "\nLength: %d", bitmap.length)
-	return buf.String()
+// Add 添加一个数 i
+func (bs *BitSet) Add(i uint64) {
+	bs.bit |= 1 << i
+}
+
+// Del 删除一个数 i
+func (bs *BitSet) Del(i uint64) {
+	bs.bit &= ^(1 << i)
+}
+
+// Has 是否存在 i
+func (bs BitSet) Has(i uint64) bool {
+	return bs.bit&(1<<i) != 0
+}
+
+// Empty 判断是否为空
+func (bs BitSet) Empty() bool {
+	return bs.bit == 0
+}
+
+// MarshalJSON json 序列化
+func (bs BitSet) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + strconv.FormatUint(bs.bit, 2) + `"`), nil
+}
+
+// UnmarshalJSON json 序列化
+func (bs *BitSet) UnmarshalJSON(buf []byte) error {
+	var err error
+	bs.bit, err = strconv.ParseUint(string(buf[1:len(buf)-1]), 2, 64)
+	return err
 }
