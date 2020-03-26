@@ -6,17 +6,16 @@ import (
 
 	"github.com/ArkNX/ark-go/interface"
 	kernelInterface "github.com/ArkNX/ark-go/plugin/kernel/interface"
-	"github.com/ArkNX/ark-go/util"
 )
 
 var (
-	ConfigModuleType   = util.GetType((*AFCConfigModule)(nil))
-	ConfigModuleName   = util.GetName((*AFCConfigModule)(nil))
+	ConfigModuleType   = ark.GetType((*AFCConfigModule)(nil))
+	ConfigModuleName   = ark.GetName((*AFCConfigModule)(nil))
 	ConfigModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCConfigModule{}).Update).Pointer()).Name()
 )
 
 func init() {
-	kernelInterface.AFIConfigModuleName = util.GetName((*AFCConfigModule)(nil))
+	kernelInterface.AFIConfigModuleName = ark.GetName((*AFCConfigModule)(nil))
 }
 
 type AFCConfigModule struct {

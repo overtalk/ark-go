@@ -49,8 +49,8 @@ import (
 
 var (
 	ModuleName   string
-	ModuleType   reflect.Type
 	ModuleUpdate string
+	ModuleType   reflect.Type
 )
 
 type AFI{{.UcfirstModuleName}}Module interface {

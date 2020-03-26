@@ -1,11 +1,8 @@
 package kernelSrc
 
-import (
-	"github.com/ArkNX/ark-go/interface"
-	"github.com/ArkNX/ark-go/util"
-)
+import "github.com/ArkNX/ark-go/interface"
 
-var PluginName = util.GetName((*AFKernelPlugin)(nil))
+var PluginName = ark.GetName((*AFKernelPlugin)(nil))
 
 type AFKernelPlugin struct {
 	ark.AFCPlugin
