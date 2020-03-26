@@ -7,13 +7,19 @@ import (
 	"github.com/ArkNX/ark-go/plugin/logPlugin/logModule"
 	"log"
 	"net/http"
+	"path/filepath"
 	"reflect"
 	"runtime"
 )
 
 func init() {
-	httpServerModule.ModuleName = ark.GetName((*AFCHttpServerModule)(nil))
-	httpServerModule.ModuleType = ark.GetType((*AFCHttpServerModule)(nil))
+	t := reflect.TypeOf((*AFCHttpServerModule)(nil))
+	if !t.Implements(reflect.TypeOf((*httpServerModule.AFIHttpServerModule)(nil)).Elem()) {
+		log.Fatal("AFIHttpServerModule is not implemented by AFCHttpServerModule")
+	}
+
+	httpServerModule.ModuleType = t.Elem()
+	httpServerModule.ModuleName = filepath.Join(httpServerModule.ModuleType.PkgPath(), httpServerModule.ModuleType.Name())
 	httpServerModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCHttpServerModule{}).Update).Pointer()).Name()
 }
 

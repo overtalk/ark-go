@@ -10,14 +10,20 @@ import (
 	consulWatch "github.com/hashicorp/consul/api/watch"
 	"log"
 	"net/http"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"time"
 )
 
 func init() {
-	consulModule.ModuleName = ark.GetName((*AFCConsulModule)(nil))
-	consulModule.ModuleType = ark.GetType((*AFCConsulModule)(nil))
+	t := reflect.TypeOf((*AFCConsulModule)(nil))
+	if !t.Implements(reflect.TypeOf((*consulModule.AFIConsulModule)(nil)).Elem()) {
+		log.Fatal("AFIConsulModule is not implemented by AFCConsulModule")
+	}
+
+	consulModule.ModuleType = t.Elem()
+	consulModule.ModuleName = filepath.Join(consulModule.ModuleType.PkgPath(), consulModule.ModuleType.Name())
 	consulModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCConsulModule{}).Update).Pointer()).Name()
 }
 

@@ -7,6 +7,7 @@ import (
 	"github.com/ArkNX/ark-go/plugin/redisPlugin/redisModule"
 	"github.com/go-redis/redis"
 	"log"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"time"
@@ -16,8 +17,13 @@ import (
 var ErrInvalidRedisAddr = errors.New("invalid redis address")
 
 func init() {
-	redisModule.ModuleName = ark.GetName((*AFCRedisModule)(nil))
-	redisModule.ModuleType = ark.GetType((*AFCRedisModule)(nil))
+	t := reflect.TypeOf((*AFCRedisModule)(nil))
+	if !t.Implements(reflect.TypeOf((*redisModule.AFIRedisModule)(nil)).Elem()) {
+		log.Fatal("AFIRedisModule is not implemented by AFCRedisModule")
+	}
+
+	redisModule.ModuleType = t.Elem()
+	redisModule.ModuleName = filepath.Join(redisModule.ModuleType.PkgPath(), redisModule.ModuleType.Name())
 	redisModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCRedisModule{}).Update).Pointer()).Name()
 }
 

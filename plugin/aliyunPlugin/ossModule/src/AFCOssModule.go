@@ -7,14 +7,21 @@ import (
 	"github.com/ArkNX/ark-go/plugin/aliyunPlugin/ossModule"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"io/ioutil"
+	"log"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"strings"
 )
 
 func init() {
-	ossModule.ModuleName = ark.GetName((*AFCOssModule)(nil))
-	ossModule.ModuleType = ark.GetType((*AFCOssModule)(nil))
+	t := reflect.TypeOf((*AFCOssModule)(nil))
+	if !t.Implements(reflect.TypeOf((*ossModule.AFIOssModule)(nil)).Elem()) {
+		log.Fatal("AFIOssModule is not implemented by AFCOssModule")
+	}
+
+	ossModule.ModuleType = t.Elem()
+	ossModule.ModuleName = filepath.Join(ossModule.ModuleType.PkgPath(), ossModule.ModuleType.Name())
 	ossModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCOssModule{}).Update).Pointer()).Name()
 }
 

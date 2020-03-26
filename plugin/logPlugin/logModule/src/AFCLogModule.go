@@ -3,7 +3,9 @@ package src
 import (
 	"github.com/sirupsen/logrus"
 	"io"
+	"log"
 	"os"
+	"path/filepath"
 	"reflect"
 	"runtime"
 
@@ -12,8 +14,13 @@ import (
 )
 
 func init() {
-	logModule.ModuleName = ark.GetName((*AFCLogModule)(nil))
-	logModule.ModuleType = ark.GetType((*AFCLogModule)(nil))
+	t := reflect.TypeOf((*AFCLogModule)(nil))
+	if !t.Implements(reflect.TypeOf((*logModule.AFILogModule)(nil)).Elem()) {
+		log.Fatal("AFILogModule is not implemented by AFCLogModule")
+	}
+
+	logModule.ModuleType = t.Elem()
+	logModule.ModuleName = filepath.Join(logModule.ModuleType.PkgPath(), logModule.ModuleType.Name())
 	logModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCLogModule{}).Update).Pointer()).Name()
 }
 
