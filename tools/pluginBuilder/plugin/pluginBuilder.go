@@ -14,8 +14,6 @@ import (
 	ark "github.com/ArkNX/ark-go/interface"
 {{- range .ModuleNames }}
 	"{{$.ProjectName}}/plugin/{{$.PluginName}}Plugin/{{.}}Module"
-{{- end }}
-{{ range .ModuleNames }}
 	_ "{{$.ProjectName}}/plugin/{{$.PluginName}}Plugin/{{.}}Module/src"
 {{- end }}
 )
@@ -70,7 +68,7 @@ func BuildPlugin(c *Config, outPath string) error {
 		}
 	}
 
-	path = filepath.Join(path, fmt.Sprintf("AF%sPlugin.go", c.UcfirstPluginName))
+	path = filepath.Join(path, fmt.Sprintf("%sPlugin.go", c.PluginName))
 	if utils.PathExists(path) {
 		fmt.Printf("path %s is already exist.\n", path)
 		return nil

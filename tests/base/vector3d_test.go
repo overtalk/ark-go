@@ -1,8 +1,9 @@
 package base_test
 
 import (
-	"github.com/ArkNX/ark-go/base"
 	"testing"
+
+	"github.com/ArkNX/ark-go/base"
 )
 
 func TestAFVector3D(t *testing.T) {

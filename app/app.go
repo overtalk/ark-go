@@ -90,7 +90,7 @@ func parseFlags() error {
 		uint8Arr = append(uint8Arr, i)
 	}
 
-	ark.GetAFPluginManagerInstance().SetBusID(base.NewAFBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]).BudId)
+	ark.GetAFPluginManagerInstance().SetBusID(base.NewAFBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]).BusID())
 
 	// set app name
 	ark.GetAFPluginManagerInstance().SetAppName(serverName)

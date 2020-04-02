@@ -43,8 +43,9 @@ func ({{.ModuleName}}Module *AFC{{.UcfirstModuleName}}Module) Init() error {
 const iStr = `package {{.ModuleName}}Module
 
 import (
-	ark "github.com/ArkNX/ark-go/interface"
 	"reflect"
+
+	ark "github.com/ArkNX/ark-go/interface"
 )
 
 var (
@@ -82,7 +83,7 @@ func BuildModule(c *Config, outPath string) error {
 			return fmt.Errorf("failed to mkdir : %s\n", srcPath)
 		}
 	}
-	srcPath = filepath.Join(srcPath, fmt.Sprintf("AFC%sModule.go", c.UcfirstModuleName))
+	srcPath = filepath.Join(srcPath, fmt.Sprintf("%sModule.go", c.ModuleName))
 	if !utils.PathExists(srcPath) {
 		if err := utils.Write(srcPath, []byte(srcStr)); err != nil {
 			return err
@@ -92,7 +93,7 @@ func BuildModule(c *Config, outPath string) error {
 		return nil
 	}
 
-	interfacePath := filepath.Join(outPath, fmt.Sprintf("%sPlugin", c.PluginName), fmt.Sprintf("%sModule", c.ModuleName), fmt.Sprintf("AFI%sModule.go", c.UcfirstModuleName))
+	interfacePath := filepath.Join(outPath, fmt.Sprintf("%sPlugin", c.PluginName), fmt.Sprintf("%sModule", c.ModuleName), fmt.Sprintf("%sModuleInterface.go", c.PluginName))
 	if utils.PathExists(interfacePath) {
 		fmt.Printf("path %s is already exist.\n", interfacePath)
 		return nil

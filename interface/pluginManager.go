@@ -23,7 +23,7 @@ type afPlugin struct {
 
 // ------------------- AFPluginManager -------------------
 type AFPluginManager struct {
-	busId          int    // bus id
+	busID          uint32 // bus id
 	timestamp      int64  // loop timestamp
 	pluginPath     string // the xxxPlugin.so filepath
 	resPath        string // the resource filepath
@@ -175,12 +175,12 @@ func (a *AFPluginManager) GetNowTime() int64 {
 	return a.timestamp
 }
 
-func (a *AFPluginManager) GetBusID() int {
-	return a.busId
+func (a *AFPluginManager) GetBusID() uint32 {
+	return a.busID
 }
 
-func (a *AFPluginManager) SetBusID(id int) {
-	a.busId = id
+func (a *AFPluginManager) SetBusID(id uint32) {
+	a.busID = id
 }
 
 func (a *AFPluginManager) GetAppName() string {

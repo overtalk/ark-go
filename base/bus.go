@@ -10,23 +10,13 @@ import (
 	"github.com/spf13/cast"
 )
 
-// bus address, like IP address, 8.8.8.8
+// AFBusAddr defines the bus address for Ark Frame
+// like IP address, 8.8.8.8
 type AFBusAddr struct {
-	ChannelId uint8
-	ZoneId    uint8
-	AppType   uint8
-	InstId    uint8
-	BudId     int
-}
-
-func NewAFBusAddrFromInt(id int) *AFBusAddr {
-	return &AFBusAddr{
-		ChannelId: uint8(id >> 24),
-		ZoneId:    uint8(id >> 16),
-		AppType:   uint8(id >> 8),
-		InstId:    uint8(id),
-		BudId:     id,
-	}
+	ChannelId uint8 // Android,Apple
+	ZoneId    uint8 // China,US...
+	AppType   uint8 // game,pvp
+	InstId    uint8 // instance id
 }
 
 func NewAFBusAddr(cId uint8, zId uint8, pId uint8, iId uint8) *AFBusAddr {
@@ -35,40 +25,46 @@ func NewAFBusAddr(cId uint8, zId uint8, pId uint8, iId uint8) *AFBusAddr {
 		ZoneId:    zId,
 		AppType:   pId,
 		InstId:    iId,
-		BudId:     int(binary.BigEndian.Uint32([]uint8{cId, zId, pId, iId})),
 	}
+}
+
+func NewAFBusAddrFromUInt32(id uint32) *AFBusAddr {
+	return &AFBusAddr{
+		ChannelId: uint8(id >> 24),
+		ZoneId:    uint8(id >> 16),
+		AppType:   uint8(id >> 8),
+		InstId:    uint8(id),
+	}
+}
+
+func NewAFBusAddrFromStr(busName string) (*AFBusAddr, error) {
+	if busName == "" {
+		return nil, errors.New("bus name is empty")
+	}
+
+	strArr := strings.Split(busName, ".")
+	if len(strArr) != 4 {
+		return nil, errors.New("bus id ` " + busName + " ` is invalid, it likes 8.8.8.8")
+	}
+
+	var uint8Arr [4]uint8
+	for index, str := range strArr {
+		i, err := cast.ToUint8E(str)
+		if err != nil {
+			return nil, err
+		}
+		uint8Arr[index] = i
+	}
+
+	return NewAFBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]), nil
+}
+
+func (a *AFBusAddr) BusID() uint32 {
+	return binary.BigEndian.Uint32([]uint8{a.ChannelId, a.ZoneId, a.AppType, a.InstId})
 }
 
 func (a *AFBusAddr) ToString() string {
 	return fmt.Sprintf("%d.%d.%d.%d", a.ChannelId, a.ZoneId, a.AppType, a.InstId)
-}
-
-func (a *AFBusAddr) FromString(busName string) error {
-	if busName == "" {
-		return errors.New("bus name is empty")
-	}
-
-	strs := strings.Split(busName, ".")
-	if len(strs) != 4 {
-		return errors.New("Bus id ` " + busName + " ` is invalid, it likes 8.8.8.8")
-	}
-
-	var uint8Arr []uint8
-	for _, str := range []string{strs[0], strs[1], strs[2], strs[3]} {
-		i, err := cast.ToUint8E(str)
-		if err != nil {
-			return err
-		}
-		uint8Arr = append(uint8Arr, i)
-	}
-
-	a.ChannelId = uint8Arr[0]
-	a.ZoneId = uint8Arr[1]
-	a.AppType = uint8Arr[2]
-	a.InstId = uint8Arr[3]
-	a.BudId = int(binary.BigEndian.Uint32([]uint8{uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]}))
-
-	return nil
 }
 
 // bus relation, app connect other app with direct way or waiting sync message
@@ -84,7 +80,7 @@ type AFProcConfig struct {
 	ThreadNum     uint8
 	IntranetEp    AFEndpoint
 	ServerEp      AFEndpoint
-	// to add other fieldss
+	// to add other fields
 }
 
 type AFRegCenter struct {
@@ -101,4 +97,5 @@ type AFAppConfig struct {
 	Type2names          map[ARKAppType]string
 	ConnectionRelations map[ARKAppType][]ARKAppType
 	SelfProc            AFProcConfig
+	OtherProcList       map[uint32]AFProcConfig // bus id -> AFProcConfig
 }
