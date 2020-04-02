@@ -7,28 +7,28 @@ import (
 	_ "github.com/ArkNX/ark-go/plugin/consulPlugin/consulModule/src"
 )
 
-var PluginName = ark.GetName((*AFConsulPlugin)(nil))
+var PluginName = ark.GetName((*ConsulPlugin)(nil))
 
-type AFConsulPlugin struct {
-	ark.AFCPlugin
+type ConsulPlugin struct {
+	ark.Plugin
 }
 
 func init() {
-	ark.GetAFPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
+	ark.GetPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
 }
 
-func NewPlugin() *AFConsulPlugin {
-	return &AFConsulPlugin{AFCPlugin: ark.NewAFCPlugin()}
+func NewPlugin() *ConsulPlugin {
+	return &ConsulPlugin{Plugin: ark.NewPlugin()}
 }
 
-func (consulPlugin *AFConsulPlugin) Install() {
-	consulPlugin.AFCPlugin.RegisterModule(consulModule.ModuleType, consulModule.ModuleUpdate)
+func (consulPlugin *ConsulPlugin) Install() {
+	consulPlugin.Plugin.RegisterModule(consulModule.ModuleType, consulModule.ModuleUpdate)
 }
 
-func (consulPlugin *AFConsulPlugin) Uninstall() {
-	consulPlugin.AFCPlugin.DeregisterModule(consulModule.ModuleName)
+func (consulPlugin *ConsulPlugin) Uninstall() {
+	consulPlugin.Plugin.DeregisterModule(consulModule.ModuleName)
 }
 
-func (consulPlugin *AFConsulPlugin) GetPluginName() string {
+func (consulPlugin *ConsulPlugin) GetPluginName() string {
 	return PluginName
 }

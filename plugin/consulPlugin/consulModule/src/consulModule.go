@@ -17,18 +17,18 @@ import (
 )
 
 func init() {
-	t := reflect.TypeOf((*AFCConsulModule)(nil))
-	if !t.Implements(reflect.TypeOf((*consulModule.AFIConsulModule)(nil)).Elem()) {
-		log.Fatal("AFIConsulModule is not implemented by AFCConsulModule")
+	t := reflect.TypeOf((*CConsulModule)(nil))
+	if !t.Implements(reflect.TypeOf((*consulModule.IConsulModule)(nil)).Elem()) {
+		log.Fatal("IConsulModule is not implemented by CConsulModule")
 	}
 
 	consulModule.ModuleType = t.Elem()
 	consulModule.ModuleName = filepath.Join(consulModule.ModuleType.PkgPath(), consulModule.ModuleType.Name())
-	consulModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCConsulModule{}).Update).Pointer()).Name()
+	consulModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&CConsulModule{}).Update).Pointer()).Name()
 }
 
-type AFCConsulModule struct {
-	ark.AFCModule
+type CConsulModule struct {
+	ark.Module
 	// other data
 	config       *consulAPI.Config // consul config
 	consulClient *consulAPI.Client // consul Client
@@ -42,11 +42,11 @@ type AFCConsulModule struct {
 	discoveryConfigs map[string]*consulModule.ConsulServiceDiscoveryConfig
 }
 
-func (consulModule_ *AFCConsulModule) Init() error {
+func (consulModule_ *CConsulModule) Init() error {
 	return nil
 }
 
-func (consulModule_ *AFCConsulModule) SetRegisterCenter(config *consulAPI.Config) error {
+func (consulModule_ *CConsulModule) SetRegisterCenter(config *consulAPI.Config) error {
 	client, err := consulAPI.NewClient(config)
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func (consulModule_ *AFCConsulModule) SetRegisterCenter(config *consulAPI.Config
 	return nil
 }
 
-func (consulModule_ *AFCConsulModule) RegisterService(port int, c *consulModule.ConsulServiceRegistryConfig) error {
+func (consulModule_ *CConsulModule) RegisterService(port int, c *consulModule.ConsulServiceRegistryConfig) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/check", func(w http.ResponseWriter, req *http.Request) {
 		w.Write([]byte("ok"))
@@ -91,7 +91,7 @@ func (consulModule_ *AFCConsulModule) RegisterService(port int, c *consulModule.
 	return consulModule_.consulClient.Agent().ServiceRegister(registration)
 }
 
-func (consulModule_ *AFCConsulModule) DeregisterService() error {
+func (consulModule_ *CConsulModule) DeregisterService() error {
 	if consulModule_.registryConfig == nil {
 		return errors.New("service register config is absent")
 	}
@@ -103,7 +103,7 @@ func (consulModule_ *AFCConsulModule) DeregisterService() error {
 	return consulModule_.consulClient.Agent().ServiceDeregister(consulModule_.registryConfig.ID)
 }
 
-func (consulModule_ *AFCConsulModule) GetHealthServices(c *consulModule.ConsulServiceDiscoveryConfig) (<-chan consulModule.ConsulAvailableServers, error) {
+func (consulModule_ *CConsulModule) GetHealthServices(c *consulModule.ConsulServiceDiscoveryConfig) (<-chan consulModule.ConsulAvailableServers, error) {
 	noticeChan := make(chan consulModule.ConsulAvailableServers, 100)
 
 	// build plan
@@ -146,7 +146,7 @@ func (consulModule_ *AFCConsulModule) GetHealthServices(c *consulModule.ConsulSe
 	return noticeChan, nil
 }
 
-func (consulModule_ *AFCConsulModule) GetKeyValue(key string) ([]byte, error) {
+func (consulModule_ *CConsulModule) GetKeyValue(key string) ([]byte, error) {
 	pair, _, err := consulModule_.consulClient.KV().Get(key, nil)
 	if err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (consulModule_ *AFCConsulModule) GetKeyValue(key string) ([]byte, error) {
 	return pair.Value, nil
 }
 
-func (consulModule_ *AFCConsulModule) SetKeyValue(key string, value []byte) error {
+func (consulModule_ *CConsulModule) SetKeyValue(key string, value []byte) error {
 	_, err := consulModule_.consulClient.KV().Put(&consulAPI.KVPair{
 		Key:   key,
 		Value: value,
@@ -167,7 +167,7 @@ func (consulModule_ *AFCConsulModule) SetKeyValue(key string, value []byte) erro
 	return err
 }
 
-func (consulModule_ *AFCConsulModule) DelKeyValue(key string) error {
+func (consulModule_ *CConsulModule) DelKeyValue(key string) error {
 	_, err := consulModule_.consulClient.KV().Delete(key, nil)
 	return err
 }

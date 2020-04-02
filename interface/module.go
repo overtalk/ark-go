@@ -5,7 +5,7 @@ import (
 	"runtime"
 )
 
-type AFIModule interface {
+type IModule interface {
 	Init() error
 	PostInit() error
 	CheckConfig() error
@@ -13,44 +13,44 @@ type AFIModule interface {
 	Update() error
 	PreShut() error
 	Shut() error
-	GetPluginManager() *AFPluginManager
-	SetPluginManager(manager *AFPluginManager)
+	GetPluginManager() *PluginManager
+	SetPluginManager(manager *PluginManager)
 	GetName() string
 	SetName(name string)
 }
 
-var afcModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCModule{}).Update).Pointer()).Name()
+var moduleUpdate = runtime.FuncForPC(reflect.ValueOf((&Module{}).Update).Pointer()).Name()
 
-// ------------------- AFIModule implement -------------------
+// ------------------- IModule implement -------------------
 // ------------------- Eclectic solution for c++ macro -------------------
-type AFCModule struct {
-	pluginManager *AFPluginManager
+type Module struct {
+	pluginManager *PluginManager
 	name          string
 }
 
-func (module *AFCModule) Init() error        { return nil }
-func (module *AFCModule) PostInit() error    { return nil }
-func (module *AFCModule) CheckConfig() error { return nil }
-func (module *AFCModule) PreUpdate() error   { return nil }
-func (module *AFCModule) Update() error      { return nil }
-func (module *AFCModule) PreShut() error     { return nil }
-func (module *AFCModule) Shut() error        { return nil }
+func (module *Module) Init() error        { return nil }
+func (module *Module) PostInit() error    { return nil }
+func (module *Module) CheckConfig() error { return nil }
+func (module *Module) PreUpdate() error   { return nil }
+func (module *Module) Update() error      { return nil }
+func (module *Module) PreShut() error     { return nil }
+func (module *Module) Shut() error        { return nil }
 
 // Do nothing in the module interface
-func (module *AFCModule) GetName() string {
+func (module *Module) GetName() string {
 	return module.name
 }
 
-func (module *AFCModule) SetName(name string) {
+func (module *Module) SetName(name string) {
 	module.name = name
 }
 
-func (module *AFCModule) GetPluginManager() *AFPluginManager {
+func (module *Module) GetPluginManager() *PluginManager {
 	return module.pluginManager
 }
 
 // Do nothing in the module interface
-func (module *AFCModule) SetPluginManager(manager *AFPluginManager) {
+func (module *Module) SetPluginManager(manager *PluginManager) {
 	if manager != nil {
 		module.pluginManager = manager
 	}

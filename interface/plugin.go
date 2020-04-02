@@ -6,59 +6,59 @@ import (
 	"reflect"
 )
 
-type AFIPlugin interface {
+type IPlugin interface {
 	GetPluginVersion() int
 	GetPluginName() string
 	Install()
 	Uninstall()
-	GetPluginManager() *AFPluginManager
-	SetPluginManager(manager *AFPluginManager)
+	GetPluginManager() *PluginManager
+	SetPluginManager(manager *PluginManager)
 }
 
-// ------------------- AFIPlugin implement -------------------
-type AFCPlugin struct {
-	Modules       map[string]AFIModule
-	pluginManager *AFPluginManager
+// ------------------- IPlugin implement -------------------
+type Plugin struct {
+	Modules       map[string]IModule
+	pluginManager *PluginManager
 }
 
-func NewAFCPlugin() AFCPlugin {
-	return AFCPlugin{
-		Modules:       make(map[string]AFIModule),
+func NewPlugin() Plugin {
+	return Plugin{
+		Modules:       make(map[string]IModule),
 		pluginManager: nil,
 	}
 }
 
-func (plugin *AFCPlugin) GetPluginVersion() int { return 0 }
-func (plugin *AFCPlugin) GetPluginName() string { return "" }
-func (plugin *AFCPlugin) Install()              {}
-func (plugin *AFCPlugin) Uninstall()            {}
-func (plugin *AFCPlugin) GetPluginManager() *AFPluginManager {
+func (plugin *Plugin) GetPluginVersion() int { return 0 }
+func (plugin *Plugin) GetPluginName() string { return "" }
+func (plugin *Plugin) Install()              {}
+func (plugin *Plugin) Uninstall()            {}
+func (plugin *Plugin) GetPluginManager() *PluginManager {
 	return plugin.pluginManager
 }
-func (plugin *AFCPlugin) SetPluginManager(p *AFPluginManager) {
+func (plugin *Plugin) SetPluginManager(p *PluginManager) {
 	plugin.pluginManager = p
 }
 
-func (plugin *AFCPlugin) RegisterModule(t reflect.Type, update string) {
-	pRegModule, ok := reflect.New(t).Interface().(AFIModule)
+func (plugin *Plugin) RegisterModule(t reflect.Type, update string) {
+	pRegModule, ok := reflect.New(t).Interface().(IModule)
 	if !ok {
-		log.Fatalf("type %v should be a AFIModule\n", t)
+		log.Fatalf("type %v should be a IModule\n", t)
 	}
 	pRegModuleName := filepath.Join(t.PkgPath(), t.Name())
 
-	pluginManager := GetAFPluginManagerInstance()
+	pluginManager := GetPluginManagerInstance()
 	pRegModule.SetPluginManager(pluginManager)
 	pRegModule.SetName(pRegModuleName)
 	pluginManager.AddModule(pRegModuleName, pRegModule)
 	plugin.Modules[pRegModuleName] = pRegModule
 
-	if update != afcModuleUpdate {
+	if update != moduleUpdate {
 		pluginManager.AddUpdateModule(pRegModule)
 	}
 }
 
-func (plugin *AFCPlugin) DeregisterModule(name string) {
-	pluginManager := GetAFPluginManagerInstance()
+func (plugin *Plugin) DeregisterModule(name string) {
+	pluginManager := GetPluginManagerInstance()
 	if pluginManager.FindModule(name) == nil {
 		return
 	}

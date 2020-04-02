@@ -8,30 +8,30 @@ import (
 	_ "github.com/ArkNX/ark-go/plugin/busPlugin/msgModule/src"
 )
 
-var PluginName = ark.GetName((*AFBusPlugin)(nil))
+var PluginName = ark.GetName((*BusPlugin)(nil))
 
-type AFBusPlugin struct {
-	ark.AFCPlugin
+type BusPlugin struct {
+	ark.Plugin
 }
 
 func init() {
-	ark.GetAFPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
+	ark.GetPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
 }
 
-func NewPlugin() *AFBusPlugin {
-	return &AFBusPlugin{AFCPlugin: ark.NewAFCPlugin()}
+func NewPlugin() *BusPlugin {
+	return &BusPlugin{Plugin: ark.NewPlugin()}
 }
 
-func (busPlugin *AFBusPlugin) Install() {
-	busPlugin.AFCPlugin.RegisterModule(busModule.ModuleType, busModule.ModuleUpdate)
-	busPlugin.AFCPlugin.RegisterModule(msgModule.ModuleType, msgModule.ModuleUpdate)
+func (busPlugin *BusPlugin) Install() {
+	busPlugin.Plugin.RegisterModule(busModule.ModuleType, busModule.ModuleUpdate)
+	busPlugin.Plugin.RegisterModule(msgModule.ModuleType, msgModule.ModuleUpdate)
 }
 
-func (busPlugin *AFBusPlugin) Uninstall() {
-	busPlugin.AFCPlugin.DeregisterModule(busModule.ModuleName)
-	busPlugin.AFCPlugin.DeregisterModule(msgModule.ModuleName)
+func (busPlugin *BusPlugin) Uninstall() {
+	busPlugin.Plugin.DeregisterModule(busModule.ModuleName)
+	busPlugin.Plugin.DeregisterModule(msgModule.ModuleName)
 }
 
-func (busPlugin *AFBusPlugin) GetPluginName() string {
+func (busPlugin *BusPlugin) GetPluginName() string {
 	return PluginName
 }

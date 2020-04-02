@@ -7,5 +7,5 @@ import (
 var AFIConfigModuleName string
 
 type AFIConfigModule interface {
-	ark.AFIModule
+	ark.IModule
 }

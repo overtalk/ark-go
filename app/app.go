@@ -90,16 +90,16 @@ func parseFlags() error {
 		uint8Arr = append(uint8Arr, i)
 	}
 
-	ark.GetAFPluginManagerInstance().SetBusID(base.NewAFBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]).BusID())
+	ark.GetPluginManagerInstance().SetBusID(base.NewBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]).BusID())
 
 	// set app name
-	ark.GetAFPluginManagerInstance().SetAppName(serverName)
+	ark.GetPluginManagerInstance().SetAppName(serverName)
 
 	// set plugin config path
-	ark.GetAFPluginManagerInstance().SetPluginConf(plugin)
+	ark.GetPluginManagerInstance().SetPluginConf(plugin)
 
 	// set log path
-	ark.GetAFPluginManagerInstance().SetLogPath(logPath)
+	ark.GetPluginManagerInstance().SetLogPath(logPath)
 
 	return nil
 }
@@ -119,11 +119,11 @@ func Start() {
 		return
 	}
 
-	if err := ark.GetAFPluginManagerInstance().Start(); err != nil {
+	if err := ark.GetPluginManagerInstance().Start(); err != nil {
 		log.Fatal(err)
 	}
 
-	defer ark.GetAFPluginManagerInstance().Stop()
+	defer ark.GetPluginManagerInstance().Stop()
 
 	// start server
 	sigChan := make(chan os.Signal, 1)
@@ -135,7 +135,7 @@ func Start() {
 		case <-sigChan:
 			return
 		case <-ticker.C:
-			ark.GetAFPluginManagerInstance().Update()
+			ark.GetPluginManagerInstance().Update()
 		}
 	}
 }

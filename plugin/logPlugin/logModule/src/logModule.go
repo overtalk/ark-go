@@ -14,23 +14,23 @@ import (
 )
 
 func init() {
-	t := reflect.TypeOf((*AFCLogModule)(nil))
-	if !t.Implements(reflect.TypeOf((*logModule.AFILogModule)(nil)).Elem()) {
-		log.Fatal("AFILogModule is not implemented by AFCLogModule")
+	t := reflect.TypeOf((*CLogModule)(nil))
+	if !t.Implements(reflect.TypeOf((*logModule.ILogModule)(nil)).Elem()) {
+		log.Fatal("ILogModule is not implemented by CLogModule")
 	}
 
 	logModule.ModuleType = t.Elem()
 	logModule.ModuleName = filepath.Join(logModule.ModuleType.PkgPath(), logModule.ModuleType.Name())
-	logModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCLogModule{}).Update).Pointer()).Name()
+	logModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&CLogModule{}).Update).Pointer()).Name()
 }
 
-type AFCLogModule struct {
-	ark.AFCModule
+type CLogModule struct {
+	ark.Module
 	// other data
 	logger *logrus.Logger
 }
 
-func (logModule *AFCLogModule) Init() error {
+func (logModule *CLogModule) Init() error {
 	logModule.logger = &logrus.Logger{
 		Out:          os.Stdout,
 		Formatter:    &logrus.JSONFormatter{},
@@ -42,26 +42,26 @@ func (logModule *AFCLogModule) Init() error {
 }
 
 // ------------------- logrus options -------------------
-func (logModule *AFCLogModule) SetFormatter(formatter logrus.Formatter) {
+func (logModule *CLogModule) SetFormatter(formatter logrus.Formatter) {
 	logModule.logger.SetFormatter(formatter)
 }
 
-func (logModule *AFCLogModule) SetOutput(out io.Writer) {
+func (logModule *CLogModule) SetOutput(out io.Writer) {
 	logModule.logger.SetOutput(out)
 }
 
-func (logModule *AFCLogModule) SetReportCaller(include bool) {
+func (logModule *CLogModule) SetReportCaller(include bool) {
 	logModule.logger.SetReportCaller(include)
 }
 
-func (logModule *AFCLogModule) SetLevel(level logrus.Level) {
+func (logModule *CLogModule) SetLevel(level logrus.Level) {
 	logModule.logger.SetLevel(level)
 }
 
-func (logModule *AFCLogModule) AddHook(hook logrus.Hook) {
+func (logModule *CLogModule) AddHook(hook logrus.Hook) {
 	logModule.logger.AddHook(hook)
 }
 
-func (logModule *AFCLogModule) GetLogger() *logrus.Logger {
+func (logModule *CLogModule) GetLogger() *logrus.Logger {
 	return logModule.logger
 }

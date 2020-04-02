@@ -1,11 +1,11 @@
 package base
 
 type (
-	ArkEntityEvent uint32
+	EntityEvent uint32
 )
 
 const (
-	ENTITY_EVT_NONE ArkEntityEvent = iota
+	ENTITY_EVT_NONE EntityEvent = iota
 	ENTITY_EVT_DESTROY
 	ENTITY_EVT_PRE_DESTROY
 	ENTITY_EVT_PRE_LOAD_DATA

@@ -7,28 +7,28 @@ import (
 	_ "github.com/ArkNX/ark-go/plugin/httpPlugin/httpServerModule/src"
 )
 
-var PluginName = ark.GetName((*AFHttpPlugin)(nil))
+var PluginName = ark.GetName((*HttpPlugin)(nil))
 
-type AFHttpPlugin struct {
-	ark.AFCPlugin
+type HttpPlugin struct {
+	ark.Plugin
 }
 
 func init() {
-	ark.GetAFPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
+	ark.GetPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
 }
 
-func NewPlugin() *AFHttpPlugin {
-	return &AFHttpPlugin{AFCPlugin: ark.NewAFCPlugin()}
+func NewPlugin() *HttpPlugin {
+	return &HttpPlugin{Plugin: ark.NewPlugin()}
 }
 
-func (httpPlugin *AFHttpPlugin) Install() {
-	httpPlugin.AFCPlugin.RegisterModule(httpServerModule.ModuleType, httpServerModule.ModuleUpdate)
+func (httpPlugin *HttpPlugin) Install() {
+	httpPlugin.Plugin.RegisterModule(httpServerModule.ModuleType, httpServerModule.ModuleUpdate)
 }
 
-func (httpPlugin *AFHttpPlugin) Uninstall() {
-	httpPlugin.AFCPlugin.DeregisterModule(httpServerModule.ModuleName)
+func (httpPlugin *HttpPlugin) Uninstall() {
+	httpPlugin.Plugin.DeregisterModule(httpServerModule.ModuleName)
 }
 
-func (httpPlugin *AFHttpPlugin) GetPluginName() string {
+func (httpPlugin *HttpPlugin) GetPluginName() string {
 	return PluginName
 }

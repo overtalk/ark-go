@@ -18,33 +18,33 @@ import (
 {{- end }}
 )
 
-var PluginName = ark.GetName((*AF{{.UcfirstPluginName}}Plugin)(nil))
+var PluginName = ark.GetName((*{{.UcfirstPluginName}}Plugin)(nil))
 
-type AF{{.UcfirstPluginName}}Plugin struct {
-	ark.AFCPlugin
+type {{.UcfirstPluginName}}Plugin struct {
+	ark.Plugin
 }
 
 func init() {
-	ark.GetAFPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
+	ark.GetPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
 }
 
-func NewPlugin() *AF{{.UcfirstPluginName}}Plugin {
-	return &AF{{.UcfirstPluginName}}Plugin{AFCPlugin: ark.NewAFCPlugin()}
+func NewPlugin() *{{.UcfirstPluginName}}Plugin {
+	return &{{.UcfirstPluginName}}Plugin{Plugin: ark.NewPlugin()}
 }
 
-func ({{.PluginName}}Plugin *AF{{.UcfirstPluginName}}Plugin) Install() {
+func ({{.PluginName}}Plugin *{{.UcfirstPluginName}}Plugin) Install() {
 {{- range .ModuleNames }}
-	{{$.PluginName}}Plugin.AFCPlugin.RegisterModule({{.}}Module.ModuleType, {{.}}Module.ModuleUpdate)
+	{{$.PluginName}}Plugin.Plugin.RegisterModule({{.}}Module.ModuleType, {{.}}Module.ModuleUpdate)
 {{- end }}
 }
 
-func ({{.PluginName}}Plugin *AF{{.UcfirstPluginName}}Plugin) Uninstall() {
+func ({{.PluginName}}Plugin *{{.UcfirstPluginName}}Plugin) Uninstall() {
 {{- range .ModuleNames }}
-	{{$.PluginName}}Plugin.AFCPlugin.DeregisterModule({{.}}Module.ModuleName)
+	{{$.PluginName}}Plugin.Plugin.DeregisterModule({{.}}Module.ModuleName)
 {{- end }}
 }
 
-func ({{.PluginName}}Plugin *AF{{.UcfirstPluginName}}Plugin) GetPluginName() string {
+func ({{.PluginName}}Plugin *{{.UcfirstPluginName}}Plugin) GetPluginName() string {
 	return PluginName
 }`
 

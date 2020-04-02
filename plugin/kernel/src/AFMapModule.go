@@ -19,7 +19,7 @@ func init() {
 }
 
 type AFCMapModule struct {
-	ark.AFCModule
+	ark.Module
 	// other value
 }
 

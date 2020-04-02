@@ -13,8 +13,8 @@ var (
 	ModuleUpdate string
 )
 
-type AFIRedisModule interface {
-	ark.AFIModule
+type IRedisModule interface {
+	ark.IModule
 	Connect(addr []string, authKey string, poolSize int) error
 	GetConn() redis.Cmdable
 	// some basic command

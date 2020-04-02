@@ -11,21 +11,21 @@ import (
 )
 
 func init() {
-	t := reflect.TypeOf((*AFCMsgModule)(nil))
-	if !t.Implements(reflect.TypeOf((*msgModule.AFIMsgModule)(nil)).Elem()) {
-		log.Fatal("AFIMsgModule is not implemented by AFCMsgModule")
+	t := reflect.TypeOf((*CMsgModule)(nil))
+	if !t.Implements(reflect.TypeOf((*msgModule.IMsgModule)(nil)).Elem()) {
+		log.Fatal("IMsgModule is not implemented by CMsgModule")
 	}
 
 	msgModule.ModuleType = t.Elem()
 	msgModule.ModuleName = filepath.Join(msgModule.ModuleType.PkgPath(), msgModule.ModuleType.Name())
-	msgModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCMsgModule{}).Update).Pointer()).Name()
+	msgModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&CMsgModule{}).Update).Pointer()).Name()
 }
 
-type AFCMsgModule struct {
-	ark.AFCModule
+type CMsgModule struct {
+	ark.Module
 	// other data
 }
 
-func (msgModule *AFCMsgModule) Init() error {
+func (msgModule *CMsgModule) Init() error {
 	return nil
 }

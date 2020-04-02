@@ -10,17 +10,17 @@ import (
 	"github.com/spf13/cast"
 )
 
-// AFBusAddr defines the bus address for Ark Frame
+// BusAddr defines the bus address for Ark Frame
 // like IP address, 8.8.8.8
-type AFBusAddr struct {
+type BusAddr struct {
 	ChannelId uint8 // Android,Apple
 	ZoneId    uint8 // China,US...
 	AppType   uint8 // game,pvp
 	InstId    uint8 // instance id
 }
 
-func NewAFBusAddr(cId uint8, zId uint8, pId uint8, iId uint8) *AFBusAddr {
-	return &AFBusAddr{
+func NewBusAddr(cId uint8, zId uint8, pId uint8, iId uint8) *BusAddr {
+	return &BusAddr{
 		ChannelId: cId,
 		ZoneId:    zId,
 		AppType:   pId,
@@ -28,8 +28,8 @@ func NewAFBusAddr(cId uint8, zId uint8, pId uint8, iId uint8) *AFBusAddr {
 	}
 }
 
-func NewAFBusAddrFromUInt32(id uint32) *AFBusAddr {
-	return &AFBusAddr{
+func NewBusAddrFromUInt32(id uint32) *BusAddr {
+	return &BusAddr{
 		ChannelId: uint8(id >> 24),
 		ZoneId:    uint8(id >> 16),
 		AppType:   uint8(id >> 8),
@@ -37,7 +37,7 @@ func NewAFBusAddrFromUInt32(id uint32) *AFBusAddr {
 	}
 }
 
-func NewAFBusAddrFromStr(busName string) (*AFBusAddr, error) {
+func NewBusAddrFromStr(busName string) (*BusAddr, error) {
 	if busName == "" {
 		return nil, errors.New("bus name is empty")
 	}
@@ -56,34 +56,34 @@ func NewAFBusAddrFromStr(busName string) (*AFBusAddr, error) {
 		uint8Arr[index] = i
 	}
 
-	return NewAFBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]), nil
+	return NewBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]), nil
 }
 
-func (a *AFBusAddr) BusID() uint32 {
+func (a *BusAddr) BusID() uint32 {
 	return binary.BigEndian.Uint32([]uint8{a.ChannelId, a.ZoneId, a.AppType, a.InstId})
 }
 
-func (a *AFBusAddr) ToString() string {
+func (a *BusAddr) ToString() string {
 	return fmt.Sprintf("%d.%d.%d.%d", a.ChannelId, a.ZoneId, a.AppType, a.InstId)
 }
 
 // bus relation, app connect other app with direct way or waiting sync message
-type AFBusRelation struct {
+type BusRelation struct {
 	AppType        uint8
 	TargetAppType  uint8
 	ConnectionType bool
 }
 
-type AFProcConfig struct {
+type ProcConfig struct {
 	BusId         int
 	MaxConnection uint32
 	ThreadNum     uint8
-	IntranetEp    AFEndpoint
-	ServerEp      AFEndpoint
+	IntranetEp    Endpoint
+	ServerEp      Endpoint
 	// to add other fields
 }
 
-type AFRegCenter struct {
+type RegCenter struct {
 	Ip            string
 	Port          uint16
 	ServiceName   string
@@ -91,11 +91,11 @@ type AFRegCenter struct {
 	CheckTimeout  time.Duration
 }
 
-type AFAppConfig struct {
-	RegCenter           AFRegCenter
-	Name2types          map[string]ARKAppType
-	Type2names          map[ARKAppType]string
-	ConnectionRelations map[ARKAppType][]ARKAppType
-	SelfProc            AFProcConfig
-	OtherProcList       map[uint32]AFProcConfig // bus id -> AFProcConfig
+type AppConfig struct {
+	RegCenter           RegCenter
+	Name2types          map[string]AppType
+	Type2names          map[AppType]string
+	ConnectionRelations map[AppType][]AppType
+	SelfProc            ProcConfig
+	OtherProcList       map[uint32]ProcConfig // bus id -> ProcConfig
 }

@@ -19,7 +19,7 @@ func init() {
 }
 
 type AFCMetaClassModule struct {
-	ark.AFCModule
+	ark.Module
 	// other value
 }
 

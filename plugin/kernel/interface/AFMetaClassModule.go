@@ -7,7 +7,7 @@ import (
 var AFIMetaClassModuleName string
 
 type AFIMetaClassModule interface {
-	ark.AFIModule
+	ark.IModule
 	Load() error
 	AddClassCallBack(className string)
 }

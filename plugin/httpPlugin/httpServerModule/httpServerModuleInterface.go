@@ -11,7 +11,7 @@ var (
 	ModuleUpdate string
 )
 
-type AFIHttpServerModule interface {
-	ark.AFIModule
+type IHttpServerModule interface {
+	ark.IModule
 	Start(port uint16) error
 }

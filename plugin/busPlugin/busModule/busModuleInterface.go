@@ -13,42 +13,42 @@ var (
 	ModuleType   reflect.Type
 )
 
-type AFIBusModule interface {
-	ark.AFIModule
+type IBusModule interface {
+	ark.IModule
 
 	// get unique signboard like `pvp-8.8.8.8`
 	GetAppWholeName(busID uint32) string
 
 	// get signboard like `pvp`
-	GetAppName(appType base.ARKAppType) string
+	GetAppName(appType base.AppType) string
 
 	// get ARKAppType by name
-	GetAppType(name string) base.ARKAppType
+	GetAppType(name string) base.AppType
 
 	// get self process information
-	GetSelfProc() *base.AFProcConfig
-	GetSelfAppType() base.ARKAppType
+	GetSelfProc() *base.ProcConfig
+	GetSelfAppType() base.AppType
 	GetSelfBusID() uint32
 	GetSelfBusName() string
 
 	// get bus id from `appType` & `instanceID`
 	// `channelID` & `zoneID` is the same as self
-	CombineBusID(appType base.ARKAppType, instanceID uint8)
+	CombineBusID(appType base.AppType, instanceID uint8)
 
 	// get the service registry
-	GetRegCenter() *base.AFRegCenter
+	GetRegCenter() *base.RegCenter
 
 	// get the app type list to connect with
-	GetTargetBusRelations() ([]base.ARKAppType, error)
+	GetTargetBusRelations() ([]base.AppType, error)
 
 	////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////
 	// get other process info
 	// use this if you do not want to use register center
-	GetOtherProc(busID uint32) (base.AFProcConfig, error)
+	GetOtherProc(busID uint32) (base.ProcConfig, error)
 
 	// get other process list by app type
 	// use this if you do not want to use register center
-	GetOtherProcListByAppType(appType base.ARKAppType) (int, []base.AFProcConfig)
+	GetOtherProcListByAppType(appType base.AppType) (int, []base.ProcConfig)
 }

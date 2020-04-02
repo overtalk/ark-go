@@ -13,8 +13,8 @@ var (
 	ModuleUpdate string
 )
 
-type AFILogModule interface {
-	ark.AFIModule
+type ILogModule interface {
+	ark.IModule
 	// logrus setting
 	SetFormatter(formatter logrus.Formatter)
 	SetOutput(out io.Writer)

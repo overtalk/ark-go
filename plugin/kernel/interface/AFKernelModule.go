@@ -7,5 +7,5 @@ import (
 var AFIKernelModuleName string
 
 type AFIKernelModule interface {
-	ark.AFIModule
+	ark.IModule
 }

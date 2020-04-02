@@ -5,26 +5,26 @@ import "github.com/ArkNX/ark-go/interface"
 var PluginName = ark.GetName((*AFKernelPlugin)(nil))
 
 type AFKernelPlugin struct {
-	ark.AFCPlugin
+	ark.Plugin
 }
 
 func NewPlugin() *AFKernelPlugin {
-	return &AFKernelPlugin{AFCPlugin: ark.NewAFCPlugin()}
+	return &AFKernelPlugin{Plugin: ark.NewPlugin()}
 }
 
 func (kernelPlugin *AFKernelPlugin) Install() {
-	kernelPlugin.AFCPlugin.RegisterModule(MetaClassModuleType, MetaClassModuleUpdate)
-	kernelPlugin.AFCPlugin.RegisterModule(ConfigModuleType, ConfigModuleUpdate)
-	kernelPlugin.AFCPlugin.RegisterModule(MapModuleType, MapModuleUpdate)
-	kernelPlugin.AFCPlugin.RegisterModule(KernelModuleType, KernelModuleUpdate)
+	kernelPlugin.Plugin.RegisterModule(MetaClassModuleType, MetaClassModuleUpdate)
+	kernelPlugin.Plugin.RegisterModule(ConfigModuleType, ConfigModuleUpdate)
+	kernelPlugin.Plugin.RegisterModule(MapModuleType, MapModuleUpdate)
+	kernelPlugin.Plugin.RegisterModule(KernelModuleType, KernelModuleUpdate)
 }
 
 func (kernelPlugin *AFKernelPlugin) Uninstall() {
 
-	kernelPlugin.AFCPlugin.DeregisterModule(MetaClassModuleName)
-	kernelPlugin.AFCPlugin.DeregisterModule(ConfigModuleName)
-	kernelPlugin.AFCPlugin.DeregisterModule(MapModuleName)
-	kernelPlugin.AFCPlugin.DeregisterModule(KernelModuleName)
+	kernelPlugin.Plugin.DeregisterModule(MetaClassModuleName)
+	kernelPlugin.Plugin.DeregisterModule(ConfigModuleName)
+	kernelPlugin.Plugin.DeregisterModule(MapModuleName)
+	kernelPlugin.Plugin.DeregisterModule(KernelModuleName)
 }
 
 func (kernelPlugin *AFKernelPlugin) GetPluginName() string {

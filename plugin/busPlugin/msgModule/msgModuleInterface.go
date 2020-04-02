@@ -12,6 +12,6 @@ var (
 	ModuleType   reflect.Type
 )
 
-type AFIMsgModule interface {
-	ark.AFIModule
+type IMsgModule interface {
+	ark.IModule
 }

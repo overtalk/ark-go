@@ -6,5 +6,5 @@ import (
 )
 
 func init() {
-	ark.GetAFPluginManagerInstance().AddPlugin(kernelSrc.PluginName, kernelSrc.NewPlugin())
+	ark.GetPluginManagerInstance().AddPlugin(kernelSrc.PluginName, kernelSrc.NewPlugin())
 }

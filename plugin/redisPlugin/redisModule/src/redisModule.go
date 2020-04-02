@@ -17,27 +17,27 @@ import (
 var ErrInvalidRedisAddr = errors.New("invalid redis address")
 
 func init() {
-	t := reflect.TypeOf((*AFCRedisModule)(nil))
-	if !t.Implements(reflect.TypeOf((*redisModule.AFIRedisModule)(nil)).Elem()) {
-		log.Fatal("AFIRedisModule is not implemented by AFCRedisModule")
+	t := reflect.TypeOf((*CRedisModule)(nil))
+	if !t.Implements(reflect.TypeOf((*redisModule.IRedisModule)(nil)).Elem()) {
+		log.Fatal("AFIRedisModule is not implemented by CRedisModule")
 	}
 
 	redisModule.ModuleType = t.Elem()
 	redisModule.ModuleName = filepath.Join(redisModule.ModuleType.PkgPath(), redisModule.ModuleType.Name())
-	redisModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFCRedisModule{}).Update).Pointer()).Name()
+	redisModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&CRedisModule{}).Update).Pointer()).Name()
 }
 
-type AFCRedisModule struct {
-	ark.AFCModule
+type CRedisModule struct {
+	ark.Module
 	// other module
-	log logModule.AFILogModule
+	log logModule.ILogModule
 	// other data
 	conn redis.Cmdable
 }
 
-func (redisModule *AFCRedisModule) Init() error {
+func (redisModule *CRedisModule) Init() error {
 	m := redisModule.GetPluginManager().FindModule(logModule.ModuleName)
-	logModule, ok := m.(logModule.AFILogModule)
+	logModule, ok := m.(logModule.ILogModule)
 	if !ok {
 		log.Fatal("failed to get log module in httpServer module")
 	}
@@ -45,7 +45,7 @@ func (redisModule *AFCRedisModule) Init() error {
 	return nil
 }
 
-func (redisModule *AFCRedisModule) Connect(addrs []string, password string, poolSize int) error {
+func (redisModule *CRedisModule) Connect(addrs []string, password string, poolSize int) error {
 	if len(addrs) == 0 {
 		return ErrInvalidRedisAddr
 	}
@@ -78,12 +78,12 @@ func (redisModule *AFCRedisModule) Connect(addrs []string, password string, pool
 
 }
 
-func (redisModule *AFCRedisModule) GetConn() redis.Cmdable {
+func (redisModule *CRedisModule) GetConn() redis.Cmdable {
 	return redisModule.conn
 }
 
 // --------------- some basic cmd ---------------
-func (redisModule *AFCRedisModule) Get(key string) (string, error) {
+func (redisModule *CRedisModule) Get(key string) (string, error) {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return "", err
 	}
@@ -91,7 +91,7 @@ func (redisModule *AFCRedisModule) Get(key string) (string, error) {
 	return redisModule.conn.Get(key).Result()
 }
 
-func (redisModule *AFCRedisModule) Set(key string, value interface{}, expiration time.Duration) error {
+func (redisModule *CRedisModule) Set(key string, value interface{}, expiration time.Duration) error {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (redisModule *AFCRedisModule) Set(key string, value interface{}, expiration
 	return redisModule.conn.Set(key, value, expiration).Err()
 }
 
-func (redisModule *AFCRedisModule) INCR(key string) (int64, error) {
+func (redisModule *CRedisModule) INCR(key string) (int64, error) {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return 0, err
 	}
@@ -107,7 +107,7 @@ func (redisModule *AFCRedisModule) INCR(key string) (int64, error) {
 	return redisModule.conn.Incr(key).Result()
 }
 
-func (redisModule *AFCRedisModule) INCRBy(key string, value int64) (int64, error) {
+func (redisModule *CRedisModule) INCRBy(key string, value int64) (int64, error) {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return 0, err
 	}
@@ -115,7 +115,7 @@ func (redisModule *AFCRedisModule) INCRBy(key string, value int64) (int64, error
 	return redisModule.conn.IncrBy(key, value).Result()
 }
 
-func (redisModule *AFCRedisModule) HSet(key, field string, value interface{}, expiration time.Duration) error {
+func (redisModule *CRedisModule) HSet(key, field string, value interface{}, expiration time.Duration) error {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func (redisModule *AFCRedisModule) HSet(key, field string, value interface{}, ex
 	return nil
 }
 
-func (redisModule *AFCRedisModule) HMSet(key string, fields map[string]interface{}, expiration time.Duration) error {
+func (redisModule *CRedisModule) HMSet(key string, fields map[string]interface{}, expiration time.Duration) error {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return err
 	}
@@ -149,7 +149,7 @@ func (redisModule *AFCRedisModule) HMSet(key string, fields map[string]interface
 	return nil
 }
 
-func (redisModule *AFCRedisModule) HGet(key, field string) (string, error) {
+func (redisModule *CRedisModule) HGet(key, field string) (string, error) {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return "", err
 	}
@@ -157,7 +157,7 @@ func (redisModule *AFCRedisModule) HGet(key, field string) (string, error) {
 	return redisModule.conn.HGet(key, field).Result()
 }
 
-func (redisModule *AFCRedisModule) HGetAll(key string) (map[string]string, error) {
+func (redisModule *CRedisModule) HGetAll(key string) (map[string]string, error) {
 	if err := redisModule.conn.Ping().Err(); err != nil {
 		return nil, err
 	}
@@ -165,6 +165,6 @@ func (redisModule *AFCRedisModule) HGetAll(key string) (map[string]string, error
 	return redisModule.conn.HGetAll(key).Result()
 }
 
-func (redisModule *AFCRedisModule) Del(keys ...string) {
+func (redisModule *CRedisModule) Del(keys ...string) {
 	redisModule.conn.Del(keys...)
 }

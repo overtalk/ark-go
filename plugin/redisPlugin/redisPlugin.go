@@ -7,28 +7,28 @@ import (
 	_ "github.com/ArkNX/ark-go/plugin/redisPlugin/redisModule/src"
 )
 
-var PluginName = ark.GetName((*AFRedisPlugin)(nil))
+var PluginName = ark.GetName((*RedisPlugin)(nil))
 
-type AFRedisPlugin struct {
-	ark.AFCPlugin
+type RedisPlugin struct {
+	ark.Plugin
 }
 
 func init() {
-	ark.GetAFPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
+	ark.GetPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
 }
 
-func NewPlugin() *AFRedisPlugin {
-	return &AFRedisPlugin{AFCPlugin: ark.NewAFCPlugin()}
+func NewPlugin() *RedisPlugin {
+	return &RedisPlugin{Plugin: ark.NewPlugin()}
 }
 
-func (redisPlugin *AFRedisPlugin) Install() {
-	redisPlugin.AFCPlugin.RegisterModule(redisModule.ModuleType, redisModule.ModuleUpdate)
+func (redisPlugin *RedisPlugin) Install() {
+	redisPlugin.Plugin.RegisterModule(redisModule.ModuleType, redisModule.ModuleUpdate)
 }
 
-func (redisPlugin *AFRedisPlugin) Uninstall() {
-	redisPlugin.AFCPlugin.DeregisterModule(redisModule.ModuleName)
+func (redisPlugin *RedisPlugin) Uninstall() {
+	redisPlugin.Plugin.DeregisterModule(redisModule.ModuleName)
 }
 
-func (redisPlugin *AFRedisPlugin) GetPluginName() string {
+func (redisPlugin *RedisPlugin) GetPluginName() string {
 	return PluginName
 }

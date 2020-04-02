@@ -43,10 +43,10 @@ func StrToProtoType(t string) ProtoType {
 }
 
 // ***** AFEndpoint *****
-type AFSocket struct{}
+type Socket struct{}
 
 // ***** AFEndpoint *****
-type AFEndpoint struct {
+type Endpoint struct {
 	isIpv6 bool
 	ext    struct {
 		Proto ProtoType
@@ -56,7 +56,7 @@ type AFEndpoint struct {
 	}
 }
 
-func NewFromString(url string) (*AFEndpoint, error) {
+func NewFromString(url string) (*Endpoint, error) {
 	if url == "" {
 		return nil, errors.New("AFEndpoint url is empty")
 	}
@@ -77,7 +77,7 @@ func NewFromString(url string) (*AFEndpoint, error) {
 		return nil, err
 	}
 
-	ep := &AFEndpoint{
+	ep := &Endpoint{
 		isIpv6: false,
 		ext: struct {
 			Proto ProtoType
@@ -94,7 +94,7 @@ func NewFromString(url string) (*AFEndpoint, error) {
 	return ep, nil
 }
 
-func (a *AFEndpoint) ToString() string {
+func (a *Endpoint) ToString() string {
 	var url string
 	if a.ext.Proto != protoTypeUnknown {
 		url += string(a.ext.Proto)
@@ -106,42 +106,42 @@ func (a *AFEndpoint) ToString() string {
 }
 
 //******* GET & SET ********
-func (a *AFEndpoint) Proto() ProtoType {
+func (a *Endpoint) Proto() ProtoType {
 	return a.ext.Proto
 }
 
-func (a *AFEndpoint) SetProto(proto ProtoType) {
+func (a *Endpoint) SetProto(proto ProtoType) {
 	a.ext.Proto = proto
 }
 
-func (a *AFEndpoint) GetIP() string {
+func (a *Endpoint) GetIP() string {
 	return a.ext.Ip
 }
 
-func (a *AFEndpoint) SetIP(ip string) {
+func (a *Endpoint) SetIP(ip string) {
 	a.ext.Ip = ip
 }
 
-func (a *AFEndpoint) GetPath() string {
+func (a *Endpoint) GetPath() string {
 	return a.ext.Path
 }
 
-func (a *AFEndpoint) SetPath(path string) {
+func (a *Endpoint) SetPath(path string) {
 	a.ext.Path = path
 }
 
-func (a *AFEndpoint) GetPort() uint16 {
+func (a *Endpoint) GetPort() uint16 {
 	return a.ext.Port
 }
 
-func (a *AFEndpoint) SetPort(port uint16) {
+func (a *Endpoint) SetPort(port uint16) {
 	a.ext.Port = port
 }
 
-func (a *AFEndpoint) IsV6() bool {
+func (a *Endpoint) IsV6() bool {
 	return a.isIpv6
 }
 
-func (a *AFEndpoint) SetIsV6(v6 bool) {
+func (a *Endpoint) SetIsV6(v6 bool) {
 	a.isIpv6 = v6
 }

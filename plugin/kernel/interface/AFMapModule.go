@@ -7,5 +7,5 @@ import (
 var AFIMapModuleName string
 
 type AFIMapModule interface {
-	ark.AFIModule
+	ark.IModule
 }

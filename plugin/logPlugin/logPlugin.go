@@ -7,28 +7,28 @@ import (
 	_ "github.com/ArkNX/ark-go/plugin/logPlugin/logModule/src"
 )
 
-var PluginName = ark.GetName((*AFLogPlugin)(nil))
+var PluginName = ark.GetName((*LogPlugin)(nil))
 
-type AFLogPlugin struct {
-	ark.AFCPlugin
+type LogPlugin struct {
+	ark.Plugin
 }
 
 func init() {
-	ark.GetAFPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
+	ark.GetPluginManagerInstance().AddPlugin(PluginName, NewPlugin())
 }
 
-func NewPlugin() *AFLogPlugin {
-	return &AFLogPlugin{AFCPlugin: ark.NewAFCPlugin()}
+func NewPlugin() *LogPlugin {
+	return &LogPlugin{Plugin: ark.NewPlugin()}
 }
 
-func (logPlugin *AFLogPlugin) Install() {
-	logPlugin.AFCPlugin.RegisterModule(logModule.ModuleType, logModule.ModuleUpdate)
+func (logPlugin *LogPlugin) Install() {
+	logPlugin.Plugin.RegisterModule(logModule.ModuleType, logModule.ModuleUpdate)
 }
 
-func (logPlugin *AFLogPlugin) Uninstall() {
-	logPlugin.AFCPlugin.DeregisterModule(logModule.ModuleName)
+func (logPlugin *LogPlugin) Uninstall() {
+	logPlugin.Plugin.DeregisterModule(logModule.ModuleName)
 }
 
-func (logPlugin *AFLogPlugin) GetPluginName() string {
+func (logPlugin *LogPlugin) GetPluginName() string {
 	return PluginName
 }

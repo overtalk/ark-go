@@ -21,22 +21,22 @@ import (
 )
 
 func init() {
-	t := reflect.TypeOf((*AFC{{.UcfirstModuleName}}Module)(nil))
-	if !t.Implements(reflect.TypeOf((*{{.ModuleName}}Module.AFI{{.UcfirstModuleName}}Module)(nil)).Elem()) {
-		log.Fatal("AFI{{.UcfirstModuleName}}Module is not implemented by AFC{{.UcfirstModuleName}}Module")
+	t := reflect.TypeOf((*C{{.UcfirstModuleName}}Module)(nil))
+	if !t.Implements(reflect.TypeOf((*{{.ModuleName}}Module.I{{.UcfirstModuleName}}Module)(nil)).Elem()) {
+		log.Fatal("I{{.UcfirstModuleName}}Module is not implemented by C{{.UcfirstModuleName}}Module")
 	}
 
 	{{.ModuleName}}Module.ModuleType = t.Elem()
 	{{.ModuleName}}Module.ModuleName = filepath.Join({{.ModuleName}}Module.ModuleType.PkgPath(), {{.ModuleName}}Module.ModuleType.Name())
-	{{.ModuleName}}Module.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&AFC{{.UcfirstModuleName}}Module{}).Update).Pointer()).Name()
+	{{.ModuleName}}Module.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&C{{.UcfirstModuleName}}Module{}).Update).Pointer()).Name()
 }
 
-type AFC{{.UcfirstModuleName}}Module struct {
-	ark.AFCModule
+type C{{.UcfirstModuleName}}Module struct {
+	ark.Module
 	// other data
 }
 
-func ({{.ModuleName}}Module *AFC{{.UcfirstModuleName}}Module) Init() error {
+func ({{.ModuleName}}Module *C{{.UcfirstModuleName}}Module) Init() error {
 	return nil
 }`
 
@@ -54,8 +54,8 @@ var (
 	ModuleType   reflect.Type
 )
 
-type AFI{{.UcfirstModuleName}}Module interface {
-	ark.AFIModule
+type I{{.UcfirstModuleName}}Module interface {
+	ark.IModule
 }`
 
 type Config struct {

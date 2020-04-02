@@ -34,8 +34,8 @@ type ConsulAvailableServers struct {
 	Servers    []string
 }
 
-type AFIConsulModule interface {
-	ark.AFIModule
+type IConsulModule interface {
+	ark.IModule
 	SetRegisterCenter(config *consulAPI.Config) error
 	RegisterService(port int, c *ConsulServiceRegistryConfig) error
 	DeregisterService() error
