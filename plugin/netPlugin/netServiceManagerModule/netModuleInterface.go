@@ -14,4 +14,6 @@ var (
 
 type INetServiceManagerModule interface {
 	ark.IModule
+	CreateServer()
+	GetSelfNetServer()
 }

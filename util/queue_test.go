@@ -53,7 +53,7 @@ func testQueueHigh(grp, cnt int) {
 func TestQueue(t *testing.T) {
 	var Sum int
 	var Use time.Duration
-	for i := 40; i <= runtime.NumCPU()*4; i++ {
+	for i := 1; i <= runtime.NumCPU(); i++ {
 		cnt := 10000 * 1000
 		if i > 9 {
 			cnt = 10000 * 100
