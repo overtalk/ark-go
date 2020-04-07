@@ -1,19 +1,20 @@
 package netCommon
 
 import (
-	"bytes"
+	"errors"
 	"github.com/ArkNX/ark-go/base"
-	"github.com/ArkNX/ark-go/util"
+	"github.com/ArkNX/ark-go/utils/ringBuffer"
+	"github.com/ArkNX/ark-go/utils/ringQueue"
 )
 
 type NetSession struct {
 	headLen   uint32
 	sessionID int64
 	objectID  base.GUID
-	buffer    bytes.Buffer
+	buffer    ringbuffer.RingBuffer
 
-	msgQueue   util.LockFreeQueue
-	eventQueue util.LockFreeQueue
+	msgQueue   ringQueue.RingQueue
+	eventQueue ringQueue.RingQueue
 	session    interface{} // tcp session / http session
 
 	connected  bool
@@ -27,7 +28,19 @@ func (netSession *NetSession) AddBuffer(data []byte) int {
 	return cnt
 }
 
-func (netSession *NetSession) GetBuffer(b []byte) (int, error) { return netSession.buffer.Read(b) }
+func (netSession *NetSession) GetBuffer(n int) ([]byte, error) {
+	header, tail := netSession.buffer.LazyRead(n)
+
+	if len(header)+len(tail) != n {
+		return nil, errors.New("unmatched bytes length")
+	}
+
+	if len(tail) != 0 {
+		header = append(header, tail...)
+	}
+
+	return header, nil
+}
 
 func (netSession *NetSession) GetBufferLen() int { return netSession.buffer.Len() }
 
@@ -41,32 +54,66 @@ func (netSession *NetSession) NeedRemove() bool { return netSession.needRemove }
 
 func (netSession *NetSession) SetNeedRemove(value bool) { netSession.needRemove = value }
 
-func (netSession *NetSession) AddNetEvent(event *NetEvent) { netSession.eventQueue.Put(event) }
+func (netSession *NetSession) AddNetEvent(event *NetEvent) {
+	netSession.eventQueue.PushOne(event)
+}
 
 func (netSession *NetSession) PopNetEvent() (*NetEvent, bool) {
-	e, flag := netSession.eventQueue.Get()
-	if !flag {
+	e, err := netSession.eventQueue.PopOne()
+	if err != nil {
 		return nil, false
 	}
 	return e.(*NetEvent), true
 }
 
-func (netSession *NetSession) AddNetMsg(msg *NetMsg) { netSession.msgQueue.Put(msg) }
+func (netSession *NetSession) AddNetMsg(msg *NetMsg) { netSession.msgQueue.PushOne(msg) }
 
 func (netSession *NetSession) PopNetMsg() (*NetMsg, bool) {
-	e, flag := netSession.msgQueue.Get()
-	if !flag {
+	e, err := netSession.msgQueue.PopOne()
+	if err != nil {
 		return nil, false
 	}
 	return e.(*NetMsg), true
 }
 
+// ParseBufferToMsg
 func (netSession *NetSession) ParseBufferToMsg() {
-	header := make([]byte, netSession.headLen)
-	n, err := netSession.GetBuffer(header)
-	if uint32(n) != netSession.headLen || err != nil {
-		return
+	for {
+		msg, err := netSession.getNetMsg()
+		if err != nil {
+			break
+		}
+
+		netSession.AddNetMsg(msg)
+	}
+}
+
+// getNetMsg defines the func to read msg from queue
+func (netSession *NetSession) getNetMsg() (*NetMsg, error) {
+	headerBytes, err := netSession.GetBuffer(int(netSession.headLen))
+	if err != nil {
+		return nil, err
 	}
 
-	// TODO : get message from buffer to queue
+	header, err := DeserializationMsgHead(headerBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	msg, err := netSession.GetBuffer(int(header.length))
+	if err != nil {
+		return nil, err
+	}
+
+	netSession.buffer.Shift(int(netSession.headLen + header.length))
+
+	return &NetMsg{
+		head: SSMsgHead{
+			MsgHead:  *header,
+			actorID:  0,
+			srcBusID: 0,
+			dstBusID: 0,
+		},
+		msgData: msg,
+	}, nil
 }

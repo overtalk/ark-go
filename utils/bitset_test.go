@@ -1,13 +1,13 @@
-package util_test
+package utils_test
 
 import (
 	"fmt"
-	"github.com/ArkNX/ark-go/util"
+	"github.com/ArkNX/ark-go/utils"
 	"testing"
 )
 
 func TestBitmap(t *testing.T) {
-	bm := util.NewBitSet()
+	bm := utils.NewBitSet()
 
 	for i := uint64(0); i < 10; i++ {
 		bm.Add(i)

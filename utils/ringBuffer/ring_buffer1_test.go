@@ -3,7 +3,7 @@ package ringbuffer_test
 import (
 	"testing"
 
-	"github.com/ArkNX/ark-go/util/ringBuffer"
+	"github.com/ArkNX/ark-go/utils/ringBuffer"
 )
 
 func TestRingBuffer_ByteBuffer(t *testing.T) {

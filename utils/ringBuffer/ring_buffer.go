@@ -10,7 +10,7 @@ import (
 	"errors"
 	"unsafe"
 
-	bytebuffer "github.com/ArkNX/ark-go/util/bufferPool"
+	bytebuffer "github.com/ArkNX/ark-go/utils/bufferPool"
 )
 
 // ErrIsEmpty will be returned when trying to read a empty ring-buffer.

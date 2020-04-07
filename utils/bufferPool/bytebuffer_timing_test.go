@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	. "github.com/ArkNX/ark-go/util/bufferPool"
+	. "github.com/ArkNX/ark-go/utils/bufferPool"
 )
 
 func BenchmarkByteBufferWrite(b *testing.B) {

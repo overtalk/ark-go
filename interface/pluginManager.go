@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 
-	"github.com/ArkNX/ark-go/util"
+	"github.com/ArkNX/ark-go/utils"
 )
 
 var (
@@ -40,7 +40,7 @@ type PluginManager struct {
 func GetPluginManagerInstance() *PluginManager {
 	once.Do(func() {
 		pluginManager = &PluginManager{
-			timestamp:                 util.GetNowTime(),
+			timestamp:                 utils.GetNowTime(),
 			pluginLibList:             make(map[string]*plugin),
 			pluginInstanceList:        make(map[string]IPlugin),
 			moduleInstanceList:        make(map[string]IModule),
@@ -94,7 +94,7 @@ func (a *PluginManager) Stop() error {
 }
 
 func (a *PluginManager) Update() error {
-	a.timestamp = util.GetNowTime()
+	a.timestamp = utils.GetNowTime()
 
 	for _, moduleWithUpdateFunc := range a.moduleWithUpdateFuncList {
 		if moduleWithUpdateFunc == nil {
@@ -337,7 +337,7 @@ func (a *PluginManager) shut() error {
 
 func (a *PluginManager) loadPluginConf() error {
 	cfg := &pluginConf{}
-	data, err := util.GetBytes(a.pluginConfPath)
+	data, err := utils.GetBytes(a.pluginConfPath)
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,7 @@ package bytebufferpool_test
 import (
 	"fmt"
 
-	"github.com/ArkNX/ark-go/util/bufferPool"
+	"github.com/ArkNX/ark-go/utils/bufferPool"
 )
 
 func ExampleByteBuffer() {

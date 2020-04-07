@@ -1,5 +1,10 @@
 package netCommon
 
+import (
+	"encoding/binary"
+	"errors"
+)
+
 ////////////////////////////////////////////////////////
 // header about
 ////////////////////////////////////////////////////////
@@ -13,6 +18,18 @@ const (
 type MsgHead struct {
 	id     uint16 // msg id
 	length uint32 // msg length (without header length)
+}
+
+func DeserializationMsgHead(data []byte) (*MsgHead, error) {
+	if len(data) != int(CS_HEAD_LENGTH) {
+		return nil, errors.New("invalid header length")
+	}
+
+	header := &MsgHead{}
+
+	header.id = binary.BigEndian.Uint16(data[:2])
+	header.length = binary.BigEndian.Uint32(data[2:CS_HEAD_LENGTH])
+	return header, nil
 }
 
 /*

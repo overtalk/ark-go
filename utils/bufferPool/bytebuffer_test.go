@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/ArkNX/ark-go/util/bufferPool"
+	. "github.com/ArkNX/ark-go/utils/bufferPool"
 )
 
 func TestByteBufferReadFrom(t *testing.T) {
