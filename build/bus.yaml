@@ -1,0 +1,17 @@
+consul:
+  ip: 127.0.0.1
+  port: 8500
+  check_interval: 10
+  check_timeout: 3
+
+applications:
+  - {name: master, type: 1}
+  - {name: world, type: 30}
+  - {name: game, type: 12}
+
+relations:
+  - {source: "master", target: "world"}
+  - {source: "game", target: "world"}
+
+process:
+  - {busid: "1.0.1.1", endpoint_server: "tcp://0.0.0.0:9001", endpoint_intranet: "tcp://127.0.0.1:9001", max_connection: 5000, thread_num: 2}

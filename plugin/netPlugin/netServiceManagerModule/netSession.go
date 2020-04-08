@@ -2,7 +2,6 @@ package netServiceManagerModule
 
 import (
 	"errors"
-	"github.com/ArkNX/ark-go/base"
 	"github.com/ArkNX/ark-go/utils/ringBuffer"
 	"github.com/ArkNX/ark-go/utils/ringQueue"
 )
@@ -10,8 +9,8 @@ import (
 type NetSession struct {
 	headLen   uint32
 	sessionID int64
-	objectID  base.GUID
-	buffer    ringbuffer.RingBuffer
+	//objectID  base.GUID
+	buffer ringbuffer.RingBuffer
 
 	msgQueue   ringQueue.RingQueue
 	eventQueue ringQueue.RingQueue

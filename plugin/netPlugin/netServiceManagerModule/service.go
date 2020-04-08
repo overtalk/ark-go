@@ -5,7 +5,7 @@ import (
 )
 
 type NetMsgFunc func(*NetMsg)
-type NetMsgSessionFunc func(*NetMsg, int64)
+type NetMsgSessionFunc func(msg *NetMsg, sessionID int64)
 type NetEventFunc func(*NetEvent)
 
 //////////////////////////////////

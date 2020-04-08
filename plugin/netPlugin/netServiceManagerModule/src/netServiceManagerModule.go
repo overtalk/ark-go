@@ -70,6 +70,7 @@ func (module *CNetServiceManagerModule) GetSelfNetServer() netServiceManagerModu
 	return module.serverServices[module.busModule.GetSelfBusID()]
 }
 
+// 当有服务注册到本服务的时候，调用这个事件
 func (module *CNetServiceManagerModule) OnRegServerCallBack(msg *netServiceManagerModule.NetMsg, sessionID int64) {
 }
 

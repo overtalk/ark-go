@@ -11,8 +11,8 @@ import (
 type HeaderLength uint32
 
 const (
-	CS_HEAD_LENGTH HeaderLength = 6  // cs head
-	SS_HEAD_LENGTH HeaderLength = 22 // ss head
+	CSHeadLength HeaderLength = 6  // cs head
+	SSHeadLength HeaderLength = 22 // ss head
 )
 
 type MsgHead struct {
@@ -21,14 +21,14 @@ type MsgHead struct {
 }
 
 func DeserializationMsgHead(data []byte) (*MsgHead, error) {
-	if len(data) != int(CS_HEAD_LENGTH) {
+	if len(data) != int(CSHeadLength) {
 		return nil, errors.New("invalid header length")
 	}
 
 	header := &MsgHead{}
 
 	header.id = binary.BigEndian.Uint16(data[:2])
-	header.length = binary.BigEndian.Uint32(data[2:CS_HEAD_LENGTH])
+	header.length = binary.BigEndian.Uint32(data[2:CSHeadLength])
 	return header, nil
 }
 

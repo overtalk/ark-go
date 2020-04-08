@@ -7,8 +7,6 @@ import (
 	"github.com/spf13/cast"
 )
 
-type ProtoType string
-
 const (
 	ProtoTypeUnknown ProtoType = "unknown"
 	ProtoTypeTcp     ProtoType = "tcp"
@@ -42,10 +40,6 @@ func StrToProtoType(t string) ProtoType {
 	}
 }
 
-// ***** AFEndpoint *****
-type Socket struct{}
-
-// ***** AFEndpoint *****
 type Endpoint struct {
 	isIpv6 bool
 	ext    struct {

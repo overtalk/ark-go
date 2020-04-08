@@ -1,4 +1,8 @@
 package base
 
-type GUID int64
-type BusID uint32
+type (
+	GUID      int64
+	BusID     uint32
+	SessionID int64
+	ProtoType string
+)

@@ -7,11 +7,6 @@ import (
 	"github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
 )
 
-var (
-	once      sync.Once
-	tcpServer *TcpServer
-)
-
 type TcpServer struct {
 	netServiceManagerModule.Net
 
@@ -27,18 +22,15 @@ type TcpServer struct {
 
 func NewTcpServer(netMsgCallback netServiceManagerModule.NetMsgSessionFunc,
 	netEventCallback netServiceManagerModule.NetEventFunc) *TcpServer {
-	once.Do(func() {
-		tcpServer = &TcpServer{
-			Net:              netServiceManagerModule.Net{},
-			rwMutex:          sync.RWMutex{},
-			sessions:         make(map[int64]*netServiceManagerModule.NetSession),
-			busID:            0,
-			netMsgCallback:   netMsgCallback,
-			netEventCallback: netEventCallback,
-		}
-	})
 
-	return tcpServer
+	return &TcpServer{
+		Net:              netServiceManagerModule.Net{},
+		rwMutex:          sync.RWMutex{},
+		sessions:         make(map[int64]*netServiceManagerModule.NetSession),
+		busID:            0,
+		netMsgCallback:   netMsgCallback,
+		netEventCallback: netEventCallback,
+	}
 }
 
 func (tcpServer *TcpServer) Update() {}
