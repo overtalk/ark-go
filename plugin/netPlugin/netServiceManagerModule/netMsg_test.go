@@ -1,9 +1,10 @@
-package netCommon_test
+package netServiceManagerModule_test
 
 import (
 	"fmt"
-	netCommon "github.com/ArkNX/ark-go/plugin/netPlugin/common"
 	"testing"
+
+	netServiceManagerModule "github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
 )
 
 func TestCopy(t *testing.T) {
@@ -24,8 +25,8 @@ func TestCopy(t *testing.T) {
 }
 
 func TestNewNetMsg(t *testing.T) {
-	netMsg := netCommon.NewNetMsgFromData([]byte("wsqinhan"))
-	netMsg1 := netCommon.NewNetMsgFromMetMsg(netMsg)
+	netMsg := netServiceManagerModule.NewNetMsgFromData([]byte("wsqinhan"))
+	netMsg1 := netServiceManagerModule.NewNetMsgFromMetMsg(netMsg)
 
 	t.Log(netMsg)
 	t.Log(netMsg1)

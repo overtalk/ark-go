@@ -1,12 +1,12 @@
-package netCommon
+package netServiceManagerModule
 
 type NetEventType uint8
 
 const (
-	NONE NetEventType = iota
-	CONNECTED
-	DISCONNECTED
-	RECV_DATA
+	NetEventNone NetEventType = iota
+	NetEventConnected
+	NetEventDisconnected
+	NetEventRecvData
 )
 
 type NetEvent struct {

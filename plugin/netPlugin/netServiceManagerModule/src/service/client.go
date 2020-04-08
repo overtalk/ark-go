@@ -1,4 +1,4 @@
-package src
+package service
 
 import (
 	"github.com/ArkNX/ark-go/base"
@@ -24,8 +24,8 @@ type NetClientService struct {
 
 	// TODO : add consistent_hashmap_
 
-	tmpConnections             []netServiceManagerModule.ConnectionData
-	net_msg_callbacks_         map[uint16]netServiceManagerModule.NetMsgFunc
-	net_event_callbacks_       []netServiceManagerModule.NetEventFunc
-	net_msg_forward_callbacks_ []netServiceManagerModule.NetMsgFunc
+	tmpConnections         []netServiceManagerModule.ConnectionData
+	netMsgCallbacks        map[uint16]netServiceManagerModule.NetMsgFunc
+	netEventCallbacks      []netServiceManagerModule.NetEventFunc
+	netMsgForwardCallbacks []netServiceManagerModule.NetMsgFunc
 }

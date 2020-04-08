@@ -1,4 +1,4 @@
-package netCommon
+package netServiceManagerModule
 
 import (
 	"errors"

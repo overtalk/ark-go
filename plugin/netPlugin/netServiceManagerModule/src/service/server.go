@@ -1,4 +1,4 @@
-package src
+package service
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	ark "github.com/ArkNX/ark-go/interface"
 	"github.com/ArkNX/ark-go/plugin/busPlugin/msgModule"
 	"github.com/ArkNX/ark-go/plugin/logPlugin/logModule"
-	netCommon "github.com/ArkNX/ark-go/plugin/netPlugin/common"
 	"github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
 	"github.com/ArkNX/ark-go/utils"
 )
@@ -73,7 +72,7 @@ func NewNetServerService() *NetServerService {
 }
 
 // start server
-func (netServer *NetServerService) Start(len netCommon.HeaderLength, busID uint32, ep base.Endpoint,
+func (netServer *NetServerService) Start(len netServiceManagerModule.HeaderLength, busID uint32, ep base.Endpoint,
 	threadCount uint8, maxConnection uint32) error {
 	switch ep.Proto() {
 	case base.ProtoTypeTcp:
@@ -94,9 +93,7 @@ func (netServer *NetServerService) Update() error {
 		return fmt.Errorf("pNet is nil")
 	}
 
-	if err := netServer.pNet.Update(); err != nil {
-		return err
-	}
+	netServer.pNet.Update()
 
 	netServer.ProcessConnection()
 	return nil
@@ -127,7 +124,7 @@ func (netServer *NetServerService) RegRegServerCallBack(cb netServiceManagerModu
 	netServer.regServerCallback = cb
 }
 
-func (netServer *NetServerService) OnNetMsg(msg *netCommon.NetMsg, sessionID base.GUID) {
+func (netServer *NetServerService) OnNetMsg(msg *netServiceManagerModule.NetMsg, sessionID base.GUID) {
 	msgID := msg.GetMsgID()
 	switch msgID {
 	// TODO: add some default message type
@@ -141,13 +138,13 @@ func (netServer *NetServerService) OnNetMsg(msg *netCommon.NetMsg, sessionID bas
 	}
 }
 
-func (netServer *NetServerService) OnNetEvent(event *netCommon.NetEvent) {
+func (netServer *NetServerService) OnNetEvent(event *netServiceManagerModule.NetEvent) {
 	switch event.GetType() {
 	//case netCommon.NONE:
 	//case netCommon.RECV_DATA:
-	case netCommon.CONNECTED:
+	case netServiceManagerModule.NetEventConnected:
 		// TODO: add log
-	case netCommon.DISCONNECTED:
+	case netServiceManagerModule.NetEventDisconnected:
 		// TODO: add log
 	}
 
@@ -168,8 +165,8 @@ func (netServer *NetServerService) ProcessConnection() {
 			delete(netServer.connectionList, index)
 			netServer.pNet.CloseSession(connection.sessionID)
 
-			event := &netCommon.NetEvent{}
-			event.SetType(netCommon.DISCONNECTED)
+			event := &netServiceManagerModule.NetEvent{}
+			event.SetType(netServiceManagerModule.NetEventDisconnected)
 			event.SetBusID(connection.busID)
 			netServer.OnNetEvent(event)
 			break
