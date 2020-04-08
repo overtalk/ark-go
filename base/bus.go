@@ -75,7 +75,7 @@ type BusRelation struct {
 }
 
 type ProcConfig struct {
-	BusId         int
+	BusId         uint32
 	MaxConnection uint32
 	ThreadNum     uint8
 	IntranetEp    Endpoint

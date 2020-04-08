@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	netServiceManagerModule "github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
+	"github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
 )
 
 func TestCopy(t *testing.T) {

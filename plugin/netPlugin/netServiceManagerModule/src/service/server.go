@@ -7,6 +7,7 @@ import (
 	"github.com/ArkNX/ark-go/plugin/busPlugin/msgModule"
 	"github.com/ArkNX/ark-go/plugin/logPlugin/logModule"
 	"github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
+	net "github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule/src/net/tcp"
 	"github.com/ArkNX/ark-go/utils"
 )
 
@@ -76,7 +77,8 @@ func (netServer *NetServerService) Start(len netServiceManagerModule.HeaderLengt
 	threadCount uint8, maxConnection uint32) error {
 	switch ep.Proto() {
 	case base.ProtoTypeTcp:
-		// TODO
+		netServer.pNet = net.NewTcpServer(netServer.OnNetMsg, netServer.OnNetEvent)
+		return netServer.pNet.StartServer(len, busID, ep.GetIP(), ep.GetPort(), threadCount, maxConnection, ep.IsV6())
 	case base.ProtoTypeUdp:
 		// TODO
 	case base.ProtoTypeWs:
@@ -124,7 +126,7 @@ func (netServer *NetServerService) RegRegServerCallBack(cb netServiceManagerModu
 	netServer.regServerCallback = cb
 }
 
-func (netServer *NetServerService) OnNetMsg(msg *netServiceManagerModule.NetMsg, sessionID base.GUID) {
+func (netServer *NetServerService) OnNetMsg(msg *netServiceManagerModule.NetMsg, sessionID int64) {
 	msgID := msg.GetMsgID()
 	switch msgID {
 	// TODO: add some default message type

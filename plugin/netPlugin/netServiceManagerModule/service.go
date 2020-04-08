@@ -5,7 +5,7 @@ import (
 )
 
 type NetMsgFunc func(*NetMsg)
-type NetMsgSessionFunc func(*NetMsg, base.GUID)
+type NetMsgSessionFunc func(*NetMsg, int64)
 type NetEventFunc func(*NetEvent)
 
 //////////////////////////////////
@@ -51,21 +51,21 @@ type ClientService interface {
 	GetActorBusID(actor base.GUID) int
 
 	// others
-	ProcessUpdate()
-	ProcessAddConnection()
-	CreateNet(proto base.ProtoType) INet
-	OnConnect()
-	OnDisonnect()
-	OnNetMsg()
-	OnNetEvent()
-	KeepReport()
-	LogServerInfo()
-	KeepAlive()
-	AddServerNode()
-	GetServerNode()
-	RemoveServerNode()
-	RegToServer()
-	SendReport()
+	//ProcessUpdate()
+	//ProcessAddConnection()
+	//CreateNet(proto base.ProtoType) INet
+	//OnConnect()
+	//OnDisconnect()
+	//OnNetMsg()
+	//OnNetEvent()
+	//KeepReport()
+	//LogServerInfo()
+	//KeepAlive()
+	//AddServerNode()
+	//GetServerNode()
+	//RemoveServerNode()
+	//RegToServer()
+	//SendReport()
 }
 
 //////////////////////////////////
@@ -84,10 +84,10 @@ type ServerService interface {
 	RegNetEventCallback(cb NetEventFunc)
 	RegRegServerCallBack(cb NetMsgSessionFunc)
 	// others
-	OnNetMsg(msg *NetMsg, sessionID base.GUID)
-	OnNetEvent(event *NetEvent)
-	ProcessConnection()
-	AddConnection(busID uint32, sessionID int64)
-	UpdateConnection(busID uint32)
-	RemoveConnection(busID uint32)
+	//OnNetMsg(msg *NetMsg, sessionID base.GUID)
+	//OnNetEvent(event *NetEvent)
+	//ProcessConnection()
+	//AddConnection(busID uint32, sessionID int64)
+	//UpdateConnection(busID uint32)
+	//RemoveConnection(busID uint32)
 }

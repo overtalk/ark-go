@@ -10,4 +10,4 @@ endif
 
 .PHONY: demo
 demo:
-	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/demo ./server/demo/main.go
+	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/demo ./sample/demo/main.go
