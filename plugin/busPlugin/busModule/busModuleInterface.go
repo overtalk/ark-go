@@ -33,22 +33,22 @@ type IBusModule interface {
 
 	// get bus id from `appType` & `instanceID`
 	// `channelID` & `zoneID` is the same as self
-	CombineBusID(appType base.AppType, instanceID uint8)
+	CombineBusID(appType base.AppType, instanceID uint8) uint32
 
 	// get the service registry
 	GetRegCenter() *base.RegCenter
 
 	// get the app type list to connect with
-	GetTargetBusRelations() ([]base.AppType, error)
+	GetTargetBusRelations() []base.AppType
 
 	////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////
 	// get other process info
 	// use this if you do not want to use register center
-	GetOtherProc(busID uint32) (base.ProcConfig, error)
+	GetOtherProc(busID uint32) base.ProcConfig
 
 	// get other process list by app type
 	// use this if you do not want to use register center
-	GetOtherProcListByAppType(appType base.AppType) (int, []base.ProcConfig)
+	GetOtherProcListByAppType(appType base.AppType) []base.ProcConfig
 }

@@ -1,0 +1,4 @@
+plugin_conf_dir: "/Users/qinhan/go/src/ark-go/build"
+
+plugins:
+  - { name: "BusModule", conf: "bus.module.yaml" }

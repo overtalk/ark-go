@@ -1,13 +1,9 @@
 package ark
 
-import "encoding/xml"
-
 type pluginConf struct {
-	XMLName xml.Name `xml:"xml"`
-	Res     *res     `xml:"res"`
-}
-
-type res struct {
-	XMLName xml.Name `xml:"res"`
-	Path    string   `xml:"path,attr"`
+	PluginConfDir string `yaml:"plugin_conf_dir"`
+	Plugins       []struct {
+		Name string `yaml:"name"`
+		Conf string `yaml:"conf"`
+	} `yaml:"plugins"`
 }

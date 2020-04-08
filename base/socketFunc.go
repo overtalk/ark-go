@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cast"
 )
 
+// TODO: if merge bus plugin & net plugin, this file can be moved to plugin/netPlugin dir
+
 const (
 	ProtoTypeUnknown ProtoType = "unknown"
 	ProtoTypeTcp     ProtoType = "tcp"

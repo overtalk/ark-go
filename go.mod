@@ -9,4 +9,5 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cast v1.3.1
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
+	gopkg.in/yaml.v2 v2.2.8
 )

@@ -1,9 +1,10 @@
 package ark
 
 import (
-	"encoding/xml"
 	"errors"
+	"gopkg.in/yaml.v2"
 	"log"
+	"path/filepath"
 	"sync"
 
 	"github.com/ArkNX/ark-go/utils"
@@ -21,13 +22,11 @@ type plugin struct {
 
 // ------------------- PluginManager -------------------
 type PluginManager struct {
-	busID          uint32 // bus id
-	timestamp      int64  // loop timestamp
-	pluginPath     string // the xxxPlugin.so filepath
-	resPath        string // the resource filepath
-	pluginConfPath string // plugin configuration filepath
-	appName        string // app name
-	logPath        string // log output path
+	timestamp int64  // loop timestamp
+	confPath  string // plugin configuration filepath
+	appName   string // app name
+	logPath   string // log output path
+	conf      *pluginConf
 
 	pluginLibList             map[string]*plugin // dynamic libraries
 	pluginInstanceList        map[string]IPlugin // plugin instances
@@ -173,13 +172,13 @@ func (a *PluginManager) GetNowTime() int64 {
 	return a.timestamp
 }
 
-func (a *PluginManager) GetBusID() uint32 {
-	return a.busID
-}
-
-func (a *PluginManager) SetBusID(id uint32) {
-	a.busID = id
-}
+//func (a *PluginManager) GetBusID() uint32 {
+//	return a.busID
+//}
+//
+//func (a *PluginManager) SetBusID(id uint32) {
+//	a.busID = id
+//}
 
 func (a *PluginManager) GetAppName() string {
 	return a.appName
@@ -189,9 +188,9 @@ func (a *PluginManager) SetAppName(appName string) {
 	a.appName = appName
 }
 
-func (a *PluginManager) GetResPath() string {
-	return a.resPath
-}
+//func (a *PluginManager) GetResPath() string {
+//	return a.resPath
+//}
 
 func (a *PluginManager) SetPluginConf(path string) {
 	if path == "" {
@@ -203,7 +202,7 @@ func (a *PluginManager) SetPluginConf(path string) {
 	//	return
 	//}
 
-	a.pluginConfPath = path
+	a.confPath = path
 }
 
 func (a *PluginManager) GetLogPath() string {
@@ -212,6 +211,14 @@ func (a *PluginManager) GetLogPath() string {
 
 func (a *PluginManager) SetLogPath(path string) {
 	a.logPath = path
+}
+
+func (a *PluginManager) GetConfigDir(name string) string {
+	for _, v := range a.conf.Plugins {
+		v.Name = name
+		return filepath.Join(a.conf.PluginConfDir, v.Conf)
+	}
+	return ""
 }
 
 // ------------------- private func -------------------
@@ -337,18 +344,15 @@ func (a *PluginManager) shut() error {
 
 func (a *PluginManager) loadPluginConf() error {
 	cfg := &pluginConf{}
-	data, err := utils.GetBytes(a.pluginConfPath)
+	data, err := utils.GetBytes(a.confPath)
 	if err != nil {
 		return err
 	}
 
-	if err := xml.Unmarshal(data, cfg); err != nil {
+	if err := yaml.Unmarshal(data, cfg); err != nil {
 		return err
 	}
 
-	if cfg.Res.Path == "" {
-		return errors.New("res path is empty")
-	}
-	a.resPath = cfg.Res.Path
+	a.conf = cfg
 	return nil
 }

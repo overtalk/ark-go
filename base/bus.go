@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cast"
 )
 
+// TODO: if merge bus plugin & net plugin, this file can be moved to plugin/netPlugin dir
+
 // BusAddr defines the bus address for Ark Frame
 // like IP address, 8.8.8.8
 type BusAddr struct {

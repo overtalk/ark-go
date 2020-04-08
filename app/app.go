@@ -7,13 +7,9 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
-	"github.com/spf13/cast"
-
-	"github.com/ArkNX/ark-go/base"
 	ark "github.com/ArkNX/ark-go/interface"
 )
 
@@ -28,11 +24,8 @@ const logo = `
 Copyright 2019 (c) ArkNX. All Rights Reserved.
 Website: https://arknx.com
 Github:  https://github.com/ArkNX/ark-go
-
-Version : %s
-Branch : %s
-CommitID : %s
 *************************************************
+
 `
 
 var (
@@ -42,14 +35,12 @@ var (
 	version = "no-version"
 	v       bool
 	// command line args
-	busId      string
 	serverName string
 	plugin     string
 	logPath    string
 )
 
 func parseFlags() error {
-	flag.StringVar(&busId, "busid", "", "Set application id(like IP address: 8.8.8.8)")
 	flag.StringVar(&serverName, "name", "", "Set application name")
 	flag.StringVar(&plugin, "plugin", "", "plugin config path")
 	flag.StringVar(&logPath, "logpath", "", "Set application log output path")
@@ -62,7 +53,7 @@ func parseFlags() error {
 	}
 
 	// check the required flags
-	for _, name := range []string{"busid", "name", "plugin", "logpath"} {
+	for _, name := range []string{"name", "plugin", "logpath"} {
 		found := false
 		flag.Visit(func(f *flag.Flag) {
 			if f.Name == name {
@@ -74,23 +65,6 @@ func parseFlags() error {
 			return errors.New("flag ` " + name + " ` is absent")
 		}
 	}
-
-	// parse bus id
-	strArr := strings.Split(busId, ".")
-	if len(strArr) != 4 {
-		return errors.New("Bus id ` " + busId + " ` is invalid, it likes 8.8.8.8")
-	}
-
-	var uint8Arr []uint8
-	for _, str := range strArr {
-		i, err := cast.ToUint8E(str)
-		if err != nil {
-			return err
-		}
-		uint8Arr = append(uint8Arr, i)
-	}
-
-	ark.GetPluginManagerInstance().SetBusID(base.NewBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]).BusID())
 
 	// set app name
 	ark.GetPluginManagerInstance().SetAppName(serverName)
@@ -105,7 +79,11 @@ func parseFlags() error {
 }
 
 func printLogo() {
-	fmt.Printf(logo, version, branch, commit)
+	fmt.Printf(logo)
+}
+
+func printVersion() {
+	fmt.Printf("Version : %s \nBranch : %s \nCommitID : %s", version, branch, commit)
 }
 
 func Start() {
@@ -116,6 +94,7 @@ func Start() {
 	printLogo()
 
 	if v {
+		printVersion()
 		return
 	}
 

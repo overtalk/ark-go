@@ -1,16 +1,24 @@
 package src
 
 import (
+	"errors"
+	"flag"
 	"fmt"
 	"github.com/ArkNX/ark-go/base"
+	"github.com/ArkNX/ark-go/utils"
+	"github.com/spf13/cast"
+	"gopkg.in/yaml.v2"
 	"log"
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 
 	"github.com/ArkNX/ark-go/interface"
 	"github.com/ArkNX/ark-go/plugin/busPlugin/busModule"
 )
+
+var busIDStr string
 
 func init() {
 	t := reflect.TypeOf((*CBusModule)(nil))
@@ -21,15 +29,35 @@ func init() {
 	busModule.ModuleType = t.Elem()
 	busModule.ModuleName = filepath.Join(busModule.ModuleType.PkgPath(), busModule.ModuleType.Name())
 	busModule.ModuleUpdate = runtime.FuncForPC(reflect.ValueOf((&CBusModule{}).Update).Pointer()).Name()
+
+	flag.StringVar(&busIDStr, "busid", "", "Set application id(like IP address: 8.8.8.8)")
 }
 
 type CBusModule struct {
 	ark.Module
 	// other data
+	busID     uint32
 	appConfig *base.AppConfig
+	busConfig *BusConfig
 }
 
 func (busModule *CBusModule) Init() error {
+	// parse bus id
+	busID, err := parseBusID()
+	if err != nil {
+		return err
+	}
+	busModule.busID = busID
+
+	// parse config
+	cfg, err := parseBusConfig(busModule.GetPluginManager().GetConfigDir("BusModule"))
+	if err != nil {
+		return err
+	}
+	busModule.busConfig = cfg
+
+	fmt.Println(busModule.busConfig)
+
 	if err := busModule.LoadBusRelationConfig(); err != nil {
 		return err
 	}
@@ -72,7 +100,7 @@ func (busModule *CBusModule) GetSelfAppType() base.AppType {
 }
 
 func (busModule *CBusModule) GetSelfBusID() uint32 {
-	return ark.GetPluginManagerInstance().GetBusID()
+	return busModule.busID
 }
 
 func (busModule *CBusModule) GetSelfBusName() string {
@@ -82,7 +110,7 @@ func (busModule *CBusModule) GetSelfBusName() string {
 // get bus id from `appType` & `instanceID`
 // `channelID` & `zoneID` is the same as self
 func (busModule *CBusModule) CombineBusID(appType base.AppType, instanceID uint8) uint32 {
-	if appType < base.ARK_APP_DEFAULT || appType > base.ARK_APP_MAX {
+	if appType < base.APPDefault || appType > base.APPMax {
 		return 0
 	}
 
@@ -140,4 +168,45 @@ func (busModule *CBusModule) LoadRegCenterConfig() error {
 func (busModule *CBusModule) LoadProcConfig() error {
 	// TODO: parse config file
 	return nil
+}
+
+////////////////////////////////////////////////////////
+// utils
+////////////////////////////////////////////////////////
+
+func parseBusID() (uint32, error) {
+	// parse bus id
+	strArr := strings.Split(busIDStr, ".")
+	if len(strArr) != 4 {
+		return 0, errors.New("Bus id ` " + busIDStr + " ` is invalid, it likes 8.8.8.8")
+	}
+
+	var uint8Arr []uint8
+	for _, str := range strArr {
+		i, err := cast.ToUint8E(str)
+		if err != nil {
+			return 0, err
+		}
+		uint8Arr = append(uint8Arr, i)
+	}
+	return base.NewBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]).BusID(), nil
+}
+
+func parseBusConfig(configPath string) (*BusConfig, error) {
+	cfg := &BusConfig{}
+
+	if len(configPath) == 0 {
+		return nil, errors.New("config for bus module is absent")
+	}
+
+	data, err := utils.GetBytes(configPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := yaml.Unmarshal(data, cfg); err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
 }
