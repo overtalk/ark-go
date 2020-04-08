@@ -2,10 +2,10 @@ package netPlugin
 
 import (
 	ark "github.com/ArkNX/ark-go/interface"
-	"github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
-	_ "github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule/src"
 	"github.com/ArkNX/ark-go/plugin/netPlugin/httpClientModule"
 	_ "github.com/ArkNX/ark-go/plugin/netPlugin/httpClientModule/src"
+	"github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
+	_ "github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule/src"
 )
 
 var PluginName = ark.GetName((*NetPlugin)(nil))

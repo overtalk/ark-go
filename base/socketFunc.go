@@ -10,13 +10,13 @@ import (
 type ProtoType string
 
 const (
-	protoTypeUnknown ProtoType = "unknown"
-	protoTypeTcp     ProtoType = "tcp"
-	protoTypeUdp     ProtoType = "udp"
-	protoTypeHttp    ProtoType = "http"
-	protoTypeHttps   ProtoType = "https"
-	protoTypeWs      ProtoType = "ws"
-	protoTypeWss     ProtoType = "wss"
+	ProtoTypeUnknown ProtoType = "unknown"
+	ProtoTypeTcp     ProtoType = "tcp"
+	ProtoTypeUdp     ProtoType = "udp"
+	ProtoTypeHttp    ProtoType = "http"
+	ProtoTypeHttps   ProtoType = "https"
+	ProtoTypeWs      ProtoType = "ws"
+	ProtoTypeWss     ProtoType = "wss"
 )
 
 func ProtoTypeToStr(t ProtoType) string {
@@ -26,19 +26,19 @@ func ProtoTypeToStr(t ProtoType) string {
 func StrToProtoType(t string) ProtoType {
 	switch t {
 	case "tcp":
-		return protoTypeTcp
+		return ProtoTypeTcp
 	case "udp":
-		return protoTypeUdp
+		return ProtoTypeUdp
 	case "http":
-		return protoTypeHttp
+		return ProtoTypeHttp
 	case "https":
-		return protoTypeHttps
+		return ProtoTypeHttps
 	case "ws":
-		return protoTypeWs
+		return ProtoTypeWs
 	case "wss":
-		return protoTypeWss
+		return ProtoTypeWss
 	default:
-		return protoTypeUnknown
+		return ProtoTypeUnknown
 	}
 }
 
@@ -96,7 +96,7 @@ func NewFromString(url string) (*Endpoint, error) {
 
 func (a *Endpoint) ToString() string {
 	var url string
-	if a.ext.Proto != protoTypeUnknown {
+	if a.ext.Proto != ProtoTypeUnknown {
 		url += string(a.ext.Proto)
 	}
 
