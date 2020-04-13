@@ -15,7 +15,7 @@ import (
 	"strings"
 
 	"github.com/ArkNX/ark-go/interface"
-	"github.com/ArkNX/ark-go/plugin/busPlugin/busModule"
+	"github.com/ArkNX/ark-go/plugin/netPlugin/busModule"
 )
 
 var busIDStr string

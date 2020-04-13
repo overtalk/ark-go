@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	"github.com/ArkNX/ark-go/interface"
-	"github.com/ArkNX/ark-go/plugin/busPlugin/msgModule"
+	"github.com/ArkNX/ark-go/plugin/netPlugin/msgModule"
 )
 
 func init() {

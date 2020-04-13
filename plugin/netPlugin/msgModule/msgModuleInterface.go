@@ -1,4 +1,4 @@
-package httpClientModule
+package msgModule
 
 import (
 	"reflect"
@@ -12,6 +12,6 @@ var (
 	ModuleType   reflect.Type
 )
 
-type IHttpClientModule interface {
+type IMsgModule interface {
 	ark.IModule
 }

@@ -1,4 +1,4 @@
-package netServiceManagerModule
+package server
 
 import (
 	"encoding/binary"
@@ -36,9 +36,7 @@ func DeserializationMsgHead(data []byte) (*MsgHead, error) {
 | msg id | msg len |
 |    2   |    4    | = 6
 */
-type CSMsgHead struct {
-	MsgHead
-}
+type CSMsgHead struct{ MsgHead }
 
 /*
 | msg id | msg len | actor id | src bus | dst bus |

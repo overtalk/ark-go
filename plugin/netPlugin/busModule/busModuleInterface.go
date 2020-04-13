@@ -1,9 +1,9 @@
 package busModule
 
 import (
-	"github.com/ArkNX/ark-go/base"
 	"reflect"
 
+	"github.com/ArkNX/ark-go/base"
 	ark "github.com/ArkNX/ark-go/interface"
 )
 

@@ -2,10 +2,12 @@ package netPlugin
 
 import (
 	ark "github.com/ArkNX/ark-go/interface"
-	"github.com/ArkNX/ark-go/plugin/netPlugin/httpClientModule"
-	_ "github.com/ArkNX/ark-go/plugin/netPlugin/httpClientModule/src"
-	"github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule"
-	_ "github.com/ArkNX/ark-go/plugin/netPlugin/netServiceManagerModule/src"
+	"github.com/ArkNX/ark-go/plugin/netPlugin/busModule"
+	_ "github.com/ArkNX/ark-go/plugin/netPlugin/busModule/src"
+	"github.com/ArkNX/ark-go/plugin/netPlugin/msgModule"
+	_ "github.com/ArkNX/ark-go/plugin/netPlugin/msgModule/src"
+	"github.com/ArkNX/ark-go/plugin/netPlugin/factoryModule"
+	_ "github.com/ArkNX/ark-go/plugin/netPlugin/factoryModule/src"
 )
 
 var PluginName = ark.GetName((*NetPlugin)(nil))
@@ -23,13 +25,15 @@ func NewPlugin() *NetPlugin {
 }
 
 func (netPlugin *NetPlugin) Install() {
-	netPlugin.Plugin.RegisterModule(netServiceManagerModule.ModuleType, netServiceManagerModule.ModuleUpdate)
-	netPlugin.Plugin.RegisterModule(httpClientModule.ModuleType, httpClientModule.ModuleUpdate)
+	netPlugin.Plugin.RegisterModule(busModule.ModuleType, busModule.ModuleUpdate)
+	netPlugin.Plugin.RegisterModule(msgModule.ModuleType, msgModule.ModuleUpdate)
+	netPlugin.Plugin.RegisterModule(factoryModule.ModuleType, factoryModule.ModuleUpdate)
 }
 
 func (netPlugin *NetPlugin) Uninstall() {
-	netPlugin.Plugin.DeregisterModule(netServiceManagerModule.ModuleName)
-	netPlugin.Plugin.DeregisterModule(httpClientModule.ModuleName)
+	netPlugin.Plugin.DeregisterModule(busModule.ModuleName)
+	netPlugin.Plugin.DeregisterModule(msgModule.ModuleName)
+	netPlugin.Plugin.DeregisterModule(factoryModule.ModuleName)
 }
 
 func (netPlugin *NetPlugin) GetPluginName() string {

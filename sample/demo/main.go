@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/ArkNX/ark-go/app"
-	_ "github.com/ArkNX/ark-go/plugin/busPlugin"
 	_ "github.com/ArkNX/ark-go/plugin/httpPlugin"
 	_ "github.com/ArkNX/ark-go/plugin/logPlugin"
 )

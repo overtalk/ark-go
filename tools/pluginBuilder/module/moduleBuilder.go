@@ -93,7 +93,7 @@ func BuildModule(c *Config, outPath string) error {
 		return nil
 	}
 
-	interfacePath := filepath.Join(outPath, fmt.Sprintf("%sPlugin", c.PluginName), fmt.Sprintf("%sModule", c.ModuleName), fmt.Sprintf("%sModuleInterface.go", c.PluginName))
+	interfacePath := filepath.Join(outPath, fmt.Sprintf("%sPlugin", c.PluginName), fmt.Sprintf("%sModule", c.ModuleName), fmt.Sprintf("%sModuleInterface.go", c.ModuleName))
 	if utils.PathExists(interfacePath) {
 		fmt.Printf("path %s is already exist.\n", interfacePath)
 		return nil
