@@ -61,8 +61,18 @@ type Conn interface {
 }
 
 ////////////////////////////////////////////////////
+// net session
 ////////////////////////////////////////////////////
-////////////////////////////////////////////////////
+type NetSession struct {
+	sessionID  int64
+	headLength HeadLength
+	connected  bool
+	needRemove bool
+	conn       Conn
+
+	buffer   *ringbuffer.RingBuffer // for stream protocol, like tcp
+	msgQueue *ringQueue.RingQueue
+}
 
 type Option func(session *NetSession)
 
@@ -78,18 +88,11 @@ func WithQueue(size int) Option {
 	}
 }
 
-type NetSession struct {
-	connected  bool
-	needRemove bool
-	sessionID  int64
-	conn       Conn
-
-	buffer   *ringbuffer.RingBuffer // for stream protocol, like tcp
-	msgQueue *ringQueue.RingQueue
-}
-
-func NewSession(c Conn, opts ...Option) *NetSession {
-	ret := &NetSession{conn: c}
+func NewSession(headLength HeadLength, c Conn, opts ...Option) *NetSession {
+	ret := &NetSession{
+		headLength: headLength,
+		conn:       c,
+	}
 
 	for _, option := range opts {
 		option(ret)
@@ -141,43 +144,38 @@ func (netSession *NetSession) PopNetMsg() (*NetMsg, bool) {
 }
 
 // ParseBufferToMsg
-//func (netSession *NetSession) ParseBufferToMsg() {
-//	for {
-//		msg, err := netSession.getNetMsg()
-//		if err != nil {
-//			break
-//		}
-//
-//		netSession.AddNetMsg(msg)
-//	}
-//}
+func (netSession *NetSession) ParseBufferToMsg() {
+	for {
+		msg, err := netSession.getNetMsg()
+		if err != nil {
+			break
+		}
+
+		netSession.AddNetMsg(msg)
+	}
+}
 
 // getNetMsg defines the func to read msg from queue
-//func (netSession *NetSession) getNetMsg() (*NetMsg, error) {
-//	headerBytes, err := netSession.GetBuffer(int(netSession.headLen))
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	header, err := DeserializationMsgHead(headerBytes)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	msg, err := netSession.GetBuffer(int(header.length))
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	netSession.buffer.Shift(int(netSession.headLen + header.length))
-//
-//	return &NetMsg{
-//		head: SSMsgHead{
-//			MsgHead:  *header,
-//			actorID:  0,
-//			srcBusID: 0,
-//			dstBusID: 0,
-//		},
-//		msgData: msg,
-//	}, nil
-//}
+func (netSession *NetSession) getNetMsg() (*NetMsg, error) {
+	headerBytes, err := netSession.GetBuffer(int(netSession.headLength))
+	if err != nil {
+		return nil, err
+	}
+
+	header, err := DeserializeMsgHead(netSession.headLength, headerBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	msg, err := netSession.GetBuffer(int(header.length))
+	if err != nil {
+		return nil, err
+	}
+
+	netSession.buffer.Shift(int(uint32(netSession.headLength) + header.length))
+
+	return &NetMsg{
+		head:    *header,
+		msgData: msg,
+	}, nil
+}
