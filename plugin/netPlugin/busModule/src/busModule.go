@@ -4,16 +4,16 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/ArkNX/ark-go/base"
-	"github.com/ArkNX/ark-go/utils"
-	"github.com/spf13/cast"
-	"gopkg.in/yaml.v2"
 	"log"
+	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	"strings"
 
+	"github.com/spf13/cast"
+
+	"github.com/ArkNX/ark-go/base"
 	"github.com/ArkNX/ark-go/interface"
 	"github.com/ArkNX/ark-go/plugin/netPlugin/busModule"
 )
@@ -50,7 +50,8 @@ func (busModule *CBusModule) Init() error {
 	busModule.busID = busID
 
 	// parse config
-	cfg, err := parseBusConfig(busModule.GetPluginManager().GetConfigDir("BusModule"))
+
+	cfg, err := GetBusConfigFromYaml(busModule.GetPluginManager().GetConfigDir("BusModule"))
 	if err != nil {
 		return err
 	}
@@ -136,6 +137,7 @@ func (busModule *CBusModule) GetTargetBusRelations() []base.AppType {
 // get other process info
 // use this if you do not want to use register center
 func (busModule *CBusModule) GetOtherProc(busID uint32) base.ProcConfig {
+	os.Environ()
 	return busModule.appConfig.OtherProcList[busID]
 }
 
@@ -190,23 +192,4 @@ func parseBusID() (uint32, error) {
 		uint8Arr = append(uint8Arr, i)
 	}
 	return base.NewBusAddr(uint8Arr[0], uint8Arr[1], uint8Arr[2], uint8Arr[3]).BusID(), nil
-}
-
-func parseBusConfig(configPath string) (*BusConfig, error) {
-	cfg := &BusConfig{}
-
-	if len(configPath) == 0 {
-		return nil, errors.New("config for bus module is absent")
-	}
-
-	data, err := utils.GetBytes(configPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := yaml.Unmarshal(data, cfg); err != nil {
-		return nil, err
-	}
-
-	return cfg, nil
 }
