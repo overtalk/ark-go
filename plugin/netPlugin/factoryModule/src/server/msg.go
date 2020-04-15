@@ -5,9 +5,6 @@ import (
 	"errors"
 )
 
-////////////////////////////////////////////////////////
-// header about
-////////////////////////////////////////////////////////
 type HeadLength uint32
 
 const (
@@ -15,11 +12,53 @@ const (
 	SSHeadLength HeadLength = 22 // ss head
 )
 
+// NetHead define a net message head
+type NetHead interface {
+	GetMsgID() uint16
+	GetMsgLength() uint32
+	GetActorID() uint64
+	GetSrcBusID() uint32
+	GetDstBusID() uint32
+
+	SetMsgID(value uint16)
+	SetMsgLength(value uint32)
+	SetActorID(value uint64)
+	SetSrcBusID(value uint32)
+	SetDstBusID(value uint32)
+}
+
+// NetMsg define a net message
+type NetMsg interface {
+	GetHead() NetHead
+	GetMsg() []byte
+}
+
+/*
+| msg id | msg len |
+|    2   |    4    | = 6
+*/
+type CSMsgHead struct {
+	id     uint16 // msg id
+	length uint32 // msg length (without header length)
+}
+
+func (head *CSMsgHead) GetMsgID() uint16     { return head.id }
+func (head *CSMsgHead) GetMsgLength() uint32 { return head.length }
+func (head *CSMsgHead) GetActorID() uint64   { return 0 }
+func (head *CSMsgHead) GetSrcBusID() uint32  { return 0 }
+func (head *CSMsgHead) GetDstBusID() uint32  { return 0 }
+
+func (head *CSMsgHead) SetMsgID(value uint16)     { head.id = value }
+func (head *CSMsgHead) SetMsgLength(value uint32) { head.length = value }
+func (head *CSMsgHead) SetActorID(value uint64)   {}
+func (head *CSMsgHead) SetSrcBusID(value uint32)  {}
+func (head *CSMsgHead) SetDstBusID(value uint32)  {}
+
 /*
 | msg id | msg len | actor id | src bus | dst bus |
 |    2   |    4    |     8    |    4    |    4    | = 22
 */
-type MsgHead struct {
+type SSMsgHead struct {
 	id       uint16 // msg id
 	length   uint32 // msg length (without header length)
 	actorID  uint64
@@ -27,17 +66,74 @@ type MsgHead struct {
 	dstBusID uint32
 }
 
+func (head *SSMsgHead) GetMsgID() uint16     { return head.id }
+func (head *SSMsgHead) GetMsgLength() uint32 { return head.length }
+func (head *SSMsgHead) GetActorID() uint64   { return head.actorID }
+func (head *SSMsgHead) GetSrcBusID() uint32  { return head.srcBusID }
+func (head *SSMsgHead) GetDstBusID() uint32  { return head.dstBusID }
+
+func (head *SSMsgHead) SetMsgID(value uint16)     { head.id = value }
+func (head *SSMsgHead) SetMsgLength(value uint32) { head.length = value }
+func (head *SSMsgHead) SetActorID(value uint64)   { head.actorID = value }
+func (head *SSMsgHead) SetSrcBusID(value uint32)  { head.srcBusID = value }
+func (head *SSMsgHead) SetDstBusID(value uint32)  { head.dstBusID = value }
+
+//////////////////////////////////////////////////////////
+//// cs net message
+//////////////////////////////////////////////////////////
+//
+//type CSNetMsg struct {
+//	head    *CSMsgHead
+//	msgData []byte
+//}
+//
+//func NewCSNetMsgFromData(data []byte) *CSNetMsg {
+//	netMsg := &CSNetMsg{
+//		head: &CSMsgHead{
+//			length: uint32(len(data)),
+//		},
+//		msgData: make([]byte, len(data)),
+//	}
+//
+//	// copy
+//	copy(netMsg.msgData, data)
+//	return netMsg
+//}
+//
+//func NewCSNetMsgFromSSNetMsg(msg *CSNetMsg) *CSNetMsg {
+//	netMsg := NewCSNetMsgFromData(msg.msgData)
+//	netMsg.head = msg.head
+//	return netMsg
+//}
+//
+//// get
+//func (netMsg *CSNetMsg) GetHead() NetHead { return netMsg.head }
+//func (netMsg *CSNetMsg) GetMsg() []byte   { return netMsg.msgData }
+//
+//// use the func of head, just for easy to use
+//func (netMsg *CSNetMsg) GetMsgID() uint16          { return netMsg.head.GetMsgID() }
+//func (netMsg *CSNetMsg) GetMsgLength() uint32      { return netMsg.head.GetMsgLength() }
+//func (netMsg *CSNetMsg) GetActorID() uint64        { return 0 }
+//func (netMsg *CSNetMsg) GetSrcBusID() uint32       { return 0 }
+//func (netMsg *CSNetMsg) GetDstBusID() uint32       { return 0 }
+//func (netMsg *CSNetMsg) SetMsgID(value uint16)     { netMsg.head.SetMsgID(value) }
+//func (netMsg *CSNetMsg) SetMsgLength(value uint32) { netMsg.head.SetMsgLength(value) }
+//func (netMsg *CSNetMsg) SetActorID(value uint64)   {}
+//func (netMsg *CSNetMsg) SetSrcBusID(value uint32)  {}
+//func (netMsg *CSNetMsg) SetDstBusID(value uint32)  {}
+
 ////////////////////////////////////////////////////////
-// net message
+// ss net message
 ////////////////////////////////////////////////////////
-type NetMsg struct {
-	head    MsgHead
+
+type SSNetMsg struct {
+	head    NetHead
 	msgData []byte
 }
 
-func NewNetMsgFromData(data []byte) *NetMsg {
-	netMsg := &NetMsg{
-		head: MsgHead{
+func NewSSNetMsgFromData(data []byte) *SSNetMsg {
+	netMsg := &SSNetMsg{
+		head: &SSMsgHead{
 			length: uint32(len(data)),
 		},
 		msgData: make([]byte, len(data)),
@@ -48,44 +144,51 @@ func NewNetMsgFromData(data []byte) *NetMsg {
 	return netMsg
 }
 
-func NewNetMsgFromMetMsg(msg *NetMsg) *NetMsg {
-	netMsg := NewNetMsgFromData(msg.msgData)
+func NewSSNetMsgFromSSNetMsg(msg *SSNetMsg) *SSNetMsg {
+	netMsg := NewSSNetMsgFromData(msg.msgData)
 	netMsg.head = msg.head
 	return netMsg
 }
 
 // get
-func (netMsg *NetMsg) GetHead() *MsgHead    { return &netMsg.head }
-func (netMsg *NetMsg) GetMsgID() uint16     { return netMsg.head.id }
-func (netMsg *NetMsg) GetMsgLength() uint32 { return netMsg.head.length }
-func (netMsg *NetMsg) GetActorID() uint64   { return netMsg.head.actorID }
-func (netMsg *NetMsg) GetSrcBusID() uint32  { return netMsg.head.srcBusID }
-func (netMsg *NetMsg) GetDstBusID() uint32  { return netMsg.head.dstBusID }
+func (netMsg *SSNetMsg) GetHead() NetHead { return netMsg.head }
+func (netMsg *SSNetMsg) GetMsg() []byte   { return netMsg.msgData }
 
-// set
-func (netMsg *NetMsg) SetMsgID(value uint16)     { netMsg.head.id = value }
-func (netMsg *NetMsg) SetMsgLength(value uint32) { netMsg.head.length = value }
-func (netMsg *NetMsg) SetActorID(value uint64)   { netMsg.head.actorID = value }
-func (netMsg *NetMsg) SetSrcBusID(value uint32)  { netMsg.head.srcBusID = value }
-func (netMsg *NetMsg) SetDstBusID(value uint32)  { netMsg.head.dstBusID = value }
+// use the func of head, just for easy to use
+func (netMsg *SSNetMsg) GetMsgID() uint16          { return netMsg.head.GetMsgID() }
+func (netMsg *SSNetMsg) GetMsgLength() uint32      { return netMsg.head.GetMsgLength() }
+func (netMsg *SSNetMsg) GetActorID() uint64        { return netMsg.head.GetActorID() }
+func (netMsg *SSNetMsg) GetSrcBusID() uint32       { return netMsg.head.GetSrcBusID() }
+func (netMsg *SSNetMsg) GetDstBusID() uint32       { return netMsg.head.GetDstBusID() }
+func (netMsg *SSNetMsg) SetMsgID(value uint16)     { netMsg.head.SetMsgID(value) }
+func (netMsg *SSNetMsg) SetMsgLength(value uint32) { netMsg.head.SetMsgLength(value) }
+func (netMsg *SSNetMsg) SetActorID(value uint64)   { netMsg.head.SetActorID(value) }
+func (netMsg *SSNetMsg) SetSrcBusID(value uint32)  { netMsg.head.SetSrcBusID(value) }
+func (netMsg *SSNetMsg) SetDstBusID(value uint32)  { netMsg.head.SetDstBusID(value) }
 
 ////////////////////////////////////////////////////////
 // deserialize net message
 ////////////////////////////////////////////////////////
-func DeserializeMsgHead(l HeadLength, data []byte) (*MsgHead, error) {
+func DeserializeMsgHead(l HeadLength, data []byte) (NetHead, error) {
 	if len(data) != int(l) {
 		return nil, errors.New("invalid header length")
 	}
 
-	header := &MsgHead{}
-	header.id = binary.BigEndian.Uint16(data[:2])
-	header.length = binary.BigEndian.Uint32(data[2:CSHeadLength])
-
-	if l == SSHeadLength {
-		header.actorID = binary.BigEndian.Uint64(data[CSHeadLength : CSHeadLength+8])
-		header.srcBusID = binary.BigEndian.Uint32(data[CSHeadLength+8 : CSHeadLength+12])
-		header.dstBusID = binary.BigEndian.Uint32(data[CSHeadLength+12:])
+	switch l {
+	case CSHeadLength:
+		return &CSMsgHead{
+			id:     binary.BigEndian.Uint16(data[:2]),
+			length: binary.BigEndian.Uint32(data[2:CSHeadLength]),
+		}, nil
+	case SSHeadLength:
+		return &SSMsgHead{
+			id:       binary.BigEndian.Uint16(data[:2]),
+			length:   binary.BigEndian.Uint32(data[2:CSHeadLength]),
+			actorID:  binary.BigEndian.Uint64(data[CSHeadLength : CSHeadLength+8]),
+			srcBusID: binary.BigEndian.Uint32(data[CSHeadLength+8 : CSHeadLength+12]),
+			dstBusID: binary.BigEndian.Uint32(data[CSHeadLength+12:]),
+		}, nil
+	default:
+		return nil, errors.New("xxx")
 	}
-
-	return header, nil
 }

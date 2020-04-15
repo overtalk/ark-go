@@ -9,8 +9,6 @@ import (
 	"github.com/ArkNX/ark-go/utils"
 )
 
-var noEnvErr = errors.New("no more envs")
-
 type Consul struct {
 	IP            string `yaml:"ip" env:"Consul_IP"`
 	Port          int    `yaml:"port" env:"Consul_Port"`
