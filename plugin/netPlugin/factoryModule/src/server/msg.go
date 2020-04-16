@@ -27,11 +27,11 @@ type NetHead interface {
 	SetDstBusID(value uint32)
 }
 
-// NetMsg define a net message
-type NetMsg interface {
-	GetHead() NetHead
-	GetMsg() []byte
-}
+//// NetMsg define a net message
+//type NetMsg interface {
+//	GetHead() NetHead
+//	GetMsg() []byte
+//}
 
 /*
 | msg id | msg len |
@@ -126,13 +126,13 @@ func (head *SSMsgHead) SetDstBusID(value uint32)  { head.dstBusID = value }
 // ss net message
 ////////////////////////////////////////////////////////
 
-type SSNetMsg struct {
+type NetMsg struct {
 	head    NetHead
 	msgData []byte
 }
 
-func NewSSNetMsgFromData(data []byte) *SSNetMsg {
-	netMsg := &SSNetMsg{
+func NewSSNetMsgFromData(data []byte) *NetMsg {
+	netMsg := &NetMsg{
 		head: &SSMsgHead{
 			length: uint32(len(data)),
 		},
@@ -144,27 +144,27 @@ func NewSSNetMsgFromData(data []byte) *SSNetMsg {
 	return netMsg
 }
 
-func NewSSNetMsgFromSSNetMsg(msg *SSNetMsg) *SSNetMsg {
+func NewSSNetMsgFromSSNetMsg(msg *NetMsg) *NetMsg {
 	netMsg := NewSSNetMsgFromData(msg.msgData)
 	netMsg.head = msg.head
 	return netMsg
 }
 
 // get
-func (netMsg *SSNetMsg) GetHead() NetHead { return netMsg.head }
-func (netMsg *SSNetMsg) GetMsg() []byte   { return netMsg.msgData }
+func (netMsg *NetMsg) GetHead() NetHead { return netMsg.head }
+func (netMsg *NetMsg) GetMsg() []byte   { return netMsg.msgData }
 
 // use the func of head, just for easy to use
-func (netMsg *SSNetMsg) GetMsgID() uint16          { return netMsg.head.GetMsgID() }
-func (netMsg *SSNetMsg) GetMsgLength() uint32      { return netMsg.head.GetMsgLength() }
-func (netMsg *SSNetMsg) GetActorID() uint64        { return netMsg.head.GetActorID() }
-func (netMsg *SSNetMsg) GetSrcBusID() uint32       { return netMsg.head.GetSrcBusID() }
-func (netMsg *SSNetMsg) GetDstBusID() uint32       { return netMsg.head.GetDstBusID() }
-func (netMsg *SSNetMsg) SetMsgID(value uint16)     { netMsg.head.SetMsgID(value) }
-func (netMsg *SSNetMsg) SetMsgLength(value uint32) { netMsg.head.SetMsgLength(value) }
-func (netMsg *SSNetMsg) SetActorID(value uint64)   { netMsg.head.SetActorID(value) }
-func (netMsg *SSNetMsg) SetSrcBusID(value uint32)  { netMsg.head.SetSrcBusID(value) }
-func (netMsg *SSNetMsg) SetDstBusID(value uint32)  { netMsg.head.SetDstBusID(value) }
+func (netMsg *NetMsg) GetMsgID() uint16          { return netMsg.head.GetMsgID() }
+func (netMsg *NetMsg) GetMsgLength() uint32      { return netMsg.head.GetMsgLength() }
+func (netMsg *NetMsg) GetActorID() uint64        { return netMsg.head.GetActorID() }
+func (netMsg *NetMsg) GetSrcBusID() uint32       { return netMsg.head.GetSrcBusID() }
+func (netMsg *NetMsg) GetDstBusID() uint32       { return netMsg.head.GetDstBusID() }
+func (netMsg *NetMsg) SetMsgID(value uint16)     { netMsg.head.SetMsgID(value) }
+func (netMsg *NetMsg) SetMsgLength(value uint32) { netMsg.head.SetMsgLength(value) }
+func (netMsg *NetMsg) SetActorID(value uint64)   { netMsg.head.SetActorID(value) }
+func (netMsg *NetMsg) SetSrcBusID(value uint32)  { netMsg.head.SetSrcBusID(value) }
+func (netMsg *NetMsg) SetDstBusID(value uint32)  { netMsg.head.SetDstBusID(value) }
 
 ////////////////////////////////////////////////////////
 // deserialize net message
@@ -189,6 +189,6 @@ func DeserializeMsgHead(l HeadLength, data []byte) (NetHead, error) {
 			dstBusID: binary.BigEndian.Uint32(data[CSHeadLength+12:]),
 		}, nil
 	default:
-		return nil, errors.New("xxx")
+		return nil, errors.New("unknown HeadLength")
 	}
 }

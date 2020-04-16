@@ -8,7 +8,7 @@ import (
 	"github.com/ArkNX/ark-go/utils/ringQueue"
 )
 
-type NetMsgHandler func(msg NetMsg, sessionID int64)
+type NetMsgHandler func(msg *NetMsg, sessionID int64)
 
 type ServerService struct {
 	working      bool

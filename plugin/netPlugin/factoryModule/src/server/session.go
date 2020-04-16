@@ -132,15 +132,15 @@ func (netSession *NetSession) NeedRemove() bool { return netSession.needRemove }
 
 func (netSession *NetSession) SetNeedRemove(value bool) { netSession.needRemove = value }
 
-func (netSession *NetSession) AddNetMsg(msg NetMsg) { netSession.msgQueue.PushOne(msg) }
+func (netSession *NetSession) AddNetMsg(msg *NetMsg) { netSession.msgQueue.PushOne(msg) }
 
-func (netSession *NetSession) PopNetMsg() (NetMsg, bool) {
+func (netSession *NetSession) PopNetMsg() (*NetMsg, bool) {
 	e, err := netSession.msgQueue.PopOne()
 	if err != nil {
 		return nil, false
 	}
 
-	return e.(NetMsg), true
+	return e.(*NetMsg), true
 }
 
 // ParseBufferToMsg
@@ -156,7 +156,7 @@ func (netSession *NetSession) ParseBufferToMsg() {
 }
 
 // getNetMsg defines the func to read msg from queue
-func (netSession *NetSession) getNetMsg() (NetMsg, error) {
+func (netSession *NetSession) getNetMsg() (*NetMsg, error) {
 	headerBytes, err := netSession.GetBuffer(int(netSession.headLength))
 	if err != nil {
 		return nil, err
@@ -174,7 +174,7 @@ func (netSession *NetSession) getNetMsg() (NetMsg, error) {
 
 	netSession.buffer.Shift(int(uint32(netSession.headLength) + header.GetMsgLength()))
 
-	return &SSNetMsg{
+	return &NetMsg{
 		head:    header,
 		msgData: msg,
 	}, nil
