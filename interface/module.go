@@ -5,7 +5,9 @@ import (
 	"runtime"
 )
 
+// IModule defines the module interface
 type IModule interface {
+	// lifecycle
 	Init() error
 	PostInit() error
 	CheckConfig() error
@@ -13,10 +15,11 @@ type IModule interface {
 	Update() error
 	PreShut() error
 	Shut() error
+	// set & get
 	GetPluginManager() *PluginManager
-	SetPluginManager(manager *PluginManager)
 	GetName() string
-	SetName(name string)
+	setPluginManager(manager *PluginManager)
+	setName(name string)
 }
 
 var moduleUpdate = runtime.FuncForPC(reflect.ValueOf((&Module{}).Update).Pointer()).Name()
@@ -41,16 +44,16 @@ func (module *Module) GetName() string {
 	return module.name
 }
 
-func (module *Module) SetName(name string) {
-	module.name = name
-}
-
 func (module *Module) GetPluginManager() *PluginManager {
 	return module.pluginManager
 }
 
+func (module *Module) setName(name string) {
+	module.name = name
+}
+
 // Do nothing in the module interface
-func (module *Module) SetPluginManager(manager *PluginManager) {
+func (module *Module) setPluginManager(manager *PluginManager) {
 	if manager != nil {
 		module.pluginManager = manager
 	}

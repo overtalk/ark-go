@@ -2,10 +2,11 @@ package ark
 
 import (
 	"errors"
-	"gopkg.in/yaml.v2"
 	"log"
 	"path/filepath"
 	"sync"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/ArkNX/ark-go/utils"
 )
@@ -50,6 +51,7 @@ func GetPluginManagerInstance() *PluginManager {
 
 	return pluginManager
 }
+
 func (a *PluginManager) AddPlugin(name string, p IPlugin) {
 	a.pluginLibList[name] = &plugin{
 		entryPoint: func(manager *PluginManager) {

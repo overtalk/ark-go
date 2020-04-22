@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/ArkNX/ark-go/base"
 
 	"github.com/panjf2000/gnet"
 )
@@ -10,7 +11,7 @@ import (
 type GNetServer struct {
 	*gnet.EventServer
 
-	hl             HeadLength
+	hl             base.HeadLength
 	sessionManager *ServerService
 }
 
@@ -25,12 +26,12 @@ func (gs *GNetServer) Start(
 	threadNum uint8,
 	maxClient uint32,
 	isIpv6 bool) error {
-	gs.hl = HeadLength(hl)
+	gs.hl = base.HeadLength(hl)
 	return gnet.Serve(gs, fmt.Sprintf("tcp://%s:%d", ip, port), gnet.WithNumEventLoop(int(threadNum)))
 }
 
 func (gs *GNetServer) OnOpened(c gnet.Conn) (out []byte, action gnet.Action) {
-	s := NewSession(gs.hl, c)
+	s := base.NewSession(gs.hl, c)
 	gs.sessionManager.AddSession(s)
 	return
 }

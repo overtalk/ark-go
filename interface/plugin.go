@@ -47,8 +47,8 @@ func (plugin *Plugin) RegisterModule(t reflect.Type, update string) {
 	pRegModuleName := filepath.Join(t.PkgPath(), t.Name())
 
 	pluginManager := GetPluginManagerInstance()
-	pRegModule.SetPluginManager(pluginManager)
-	pRegModule.SetName(pRegModuleName)
+	pRegModule.setPluginManager(pluginManager)
+	pRegModule.setName(pRegModuleName)
 	pluginManager.AddModule(pRegModuleName, pRegModule)
 	plugin.Modules[pRegModuleName] = pRegModule
 

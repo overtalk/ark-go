@@ -1,4 +1,4 @@
-package server
+package base
 
 import (
 	"encoding/binary"
@@ -26,12 +26,6 @@ type NetHead interface {
 	SetSrcBusID(value uint32)
 	SetDstBusID(value uint32)
 }
-
-//// NetMsg define a net message
-//type NetMsg interface {
-//	GetHead() NetHead
-//	GetMsg() []byte
-//}
 
 /*
 | msg id | msg len |
@@ -78,52 +72,8 @@ func (head *SSMsgHead) SetActorID(value uint64)   { head.actorID = value }
 func (head *SSMsgHead) SetSrcBusID(value uint32)  { head.srcBusID = value }
 func (head *SSMsgHead) SetDstBusID(value uint32)  { head.dstBusID = value }
 
-//////////////////////////////////////////////////////////
-//// cs net message
-//////////////////////////////////////////////////////////
-//
-//type CSNetMsg struct {
-//	head    *CSMsgHead
-//	msgData []byte
-//}
-//
-//func NewCSNetMsgFromData(data []byte) *CSNetMsg {
-//	netMsg := &CSNetMsg{
-//		head: &CSMsgHead{
-//			length: uint32(len(data)),
-//		},
-//		msgData: make([]byte, len(data)),
-//	}
-//
-//	// copy
-//	copy(netMsg.msgData, data)
-//	return netMsg
-//}
-//
-//func NewCSNetMsgFromSSNetMsg(msg *CSNetMsg) *CSNetMsg {
-//	netMsg := NewCSNetMsgFromData(msg.msgData)
-//	netMsg.head = msg.head
-//	return netMsg
-//}
-//
-//// get
-//func (netMsg *CSNetMsg) GetHead() NetHead { return netMsg.head }
-//func (netMsg *CSNetMsg) GetMsg() []byte   { return netMsg.msgData }
-//
-//// use the func of head, just for easy to use
-//func (netMsg *CSNetMsg) GetMsgID() uint16          { return netMsg.head.GetMsgID() }
-//func (netMsg *CSNetMsg) GetMsgLength() uint32      { return netMsg.head.GetMsgLength() }
-//func (netMsg *CSNetMsg) GetActorID() uint64        { return 0 }
-//func (netMsg *CSNetMsg) GetSrcBusID() uint32       { return 0 }
-//func (netMsg *CSNetMsg) GetDstBusID() uint32       { return 0 }
-//func (netMsg *CSNetMsg) SetMsgID(value uint16)     { netMsg.head.SetMsgID(value) }
-//func (netMsg *CSNetMsg) SetMsgLength(value uint32) { netMsg.head.SetMsgLength(value) }
-//func (netMsg *CSNetMsg) SetActorID(value uint64)   {}
-//func (netMsg *CSNetMsg) SetSrcBusID(value uint32)  {}
-//func (netMsg *CSNetMsg) SetDstBusID(value uint32)  {}
-
 ////////////////////////////////////////////////////////
-// ss net message
+// net message
 ////////////////////////////////////////////////////////
 
 type NetMsg struct {

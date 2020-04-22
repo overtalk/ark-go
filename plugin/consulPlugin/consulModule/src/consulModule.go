@@ -4,16 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ArkNX/ark-go/interface"
-	"github.com/ArkNX/ark-go/plugin/consulPlugin/consulModule"
-	consulAPI "github.com/hashicorp/consul/api"
-	consulWatch "github.com/hashicorp/consul/api/watch"
 	"log"
 	"net/http"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	"time"
+
+	consulAPI "github.com/hashicorp/consul/api"
+	consulWatch "github.com/hashicorp/consul/api/watch"
+
+	"github.com/ArkNX/ark-go/interface"
+	"github.com/ArkNX/ark-go/plugin/consulPlugin/consulModule"
 )
 
 func init() {

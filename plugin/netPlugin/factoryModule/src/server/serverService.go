@@ -8,22 +8,24 @@ import (
 	"github.com/ArkNX/ark-go/utils/ringQueue"
 )
 
-type NetMsgHandler func(msg *NetMsg, sessionID int64)
+type NetMsgHandler func(msg *base.NetMsg, sessionID int64)
 
 type ServerService struct {
 	working      bool
-	sessions     map[int64]*NetSession
-	connectQueue *ringQueue.RingQueue
+	ep           *base.Endpoint
 	handler      NetMsgHandler
+	sessions     map[int64]*base.NetSession
+	connectQueue *ringQueue.RingQueue
 	server       factoryModule.Server
 }
 
 func NewServerService(handler NetMsgHandler, ep *base.Endpoint) (*ServerService, error) {
 	ret := &ServerService{
 		working:      false,
-		sessions:     make(map[int64]*NetSession),
+		sessions:     make(map[int64]*base.NetSession),
 		connectQueue: ringQueue.New(128),
 		handler:      handler,
+		ep:           ep,
 	}
 
 	switch ep.Proto() {
@@ -38,14 +40,12 @@ func NewServerService(handler NetMsgHandler, ep *base.Endpoint) (*ServerService,
 func (ss *ServerService) StartServer(
 	hl uint32,
 	busID uint32,
-	ip string,
-	port uint16,
 	threadNum uint8,
 	maxClient uint32,
 	isIpv6 bool,
 ) error {
 	ss.working = true
-	return ss.server.Start(hl, ip, port, threadNum, maxClient, isIpv6)
+	return ss.server.Start(hl, ss.ep.GetIP(), ss.ep.GetPort(), threadNum, maxClient, isIpv6)
 }
 
 func (ss *ServerService) Update() {
@@ -56,12 +56,12 @@ func (ss *ServerService) Update() {
 	for _, session := range connectSession {
 		// TODO : gen a session id
 		var sessionID int64 = 12
-		ss.sessions[sessionID] = session.(*NetSession)
+		ss.sessions[sessionID] = session.(*base.NetSession)
 	}
 
 	var needRemove []int64
 	for sessionID, session := range ss.sessions {
-		if session.needRemove {
+		if session.NeedRemove() {
 			needRemove = append(needRemove, sessionID)
 			continue
 		}
@@ -107,12 +107,12 @@ func (ss *ServerService) IsWorking() bool { return ss.working }
 
 func (ss *ServerService) SetWorking(value bool) { ss.working = value }
 
-func (ss *ServerService) AddSession(session *NetSession) {
+func (ss *ServerService) AddSession(session *base.NetSession) {
 	ss.connectQueue.PushOne(session)
 }
 
 func (ss *ServerService) RemoveSession(sessionID int64) {
-	ss.sessions[sessionID].needRemove = true
+	ss.sessions[sessionID].SetNeedRemove(true)
 }
 
 func (ss *ServerService) AddBuffer(id int64, msgData []byte) {

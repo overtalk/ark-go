@@ -24,7 +24,7 @@ type IFactoryModule interface {
 //////////////////////////////
 type ServerService interface {
 	Update()
-	StartServer(hl uint32, busID uint32, ip string, port uint16, threadNum uint8, maxClient uint32, isIpv6 bool) error
+	StartServer(hl uint32, busID uint32, threadNum uint8, maxClient uint32, isIpv6 bool) error
 	Shutdown() error
 	SendMsg(msgData []byte, sessionID int64) error
 	BroadcastMsg(msgData []byte) error
