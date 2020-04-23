@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net"
 
-	"github.com/ArkNX/ark-go/utils/ringBuffer"
+	ringbuffer "github.com/ArkNX/ark-go/utils/ringBuffer"
 	"github.com/ArkNX/ark-go/utils/ringQueue"
 )
 

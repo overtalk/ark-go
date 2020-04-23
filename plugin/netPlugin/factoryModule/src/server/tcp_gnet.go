@@ -3,9 +3,10 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/ArkNX/ark-go/base"
 
 	"github.com/panjf2000/gnet"
+
+	"github.com/ArkNX/ark-go/base"
 )
 
 type GNetServer struct {

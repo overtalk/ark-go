@@ -62,7 +62,7 @@ func NewFromString(url string) (*Endpoint, error) {
 		return nil, err
 	}
 
-	if r.MatchString(url) {
+	if !r.MatchString(url) {
 		return nil, errors.New("unmatched url ` " + url + " `")
 	}
 

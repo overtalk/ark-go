@@ -3,23 +3,22 @@ package server
 import (
 	"errors"
 	"fmt"
+
 	"github.com/ArkNX/ark-go/base"
 	"github.com/ArkNX/ark-go/plugin/netPlugin/factoryModule"
 	"github.com/ArkNX/ark-go/utils/ringQueue"
 )
 
-type NetMsgHandler func(msg *base.NetMsg, sessionID int64)
-
 type ServerService struct {
 	working      bool
 	ep           *base.Endpoint
-	handler      NetMsgHandler
+	handler      base.NetMsgHandler
 	sessions     map[int64]*base.NetSession
 	connectQueue *ringQueue.RingQueue
 	server       factoryModule.Server
 }
 
-func NewServerService(handler NetMsgHandler, ep *base.Endpoint) (*ServerService, error) {
+func NewServerService(handler base.NetMsgHandler, ep *base.Endpoint) (*ServerService, error) {
 	ret := &ServerService{
 		working:      false,
 		sessions:     make(map[int64]*base.NetSession),

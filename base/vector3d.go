@@ -3,9 +3,10 @@ package base
 import (
 	"errors"
 	"fmt"
-	"github.com/spf13/cast"
 	"math"
 	"strings"
+
+	"github.com/spf13/cast"
 )
 
 type Vector3D struct {
